@@ -1,7 +1,6 @@
 package br.com.poo.ifood.model;
 
 public class SuperAdmin {
-
     private Integer id_superadmin;
     private String nome;
     private String email;
