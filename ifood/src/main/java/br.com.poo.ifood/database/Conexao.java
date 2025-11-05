@@ -13,10 +13,10 @@ public class Conexao {
     public static Connection getConnection() {
         try {
             Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-            System.out.println("✅ Conectado com sucesso ao banco!");
+            System.out.println("SUCESSO: Conectado com sucesso ao banco!");
             return conn;
         } catch (SQLException e) {
-            System.out.println("❌ Erro ao conectar: " + e.getMessage());
+            System.out.println("ERRO: Erro ao conectar: " + e.getMessage());
             return null;
         }
     }
