@@ -2,18 +2,20 @@ package br.com.poo.ifood.model;
 
 public class Pedido {
     private Integer id_pedido;
-    private String nome;
-    private String descricao;
-    private Double preco;
+    private Integer cliente_id;
+    private Integer restaurante_id;
+    private Integer produto_id;
     private Integer quantidade;
+    private Double preco_total;
 
     public Pedido() {}
 
-    public  Pedido(String nome, String descricao, Double preco , Integer quantidade) {
-        this.nome = nome;
-        this.descricao = descricao;
-        this.preco = preco;
+    public Pedido(Integer cliente_id, Integer restaurante_id, Integer produto_id, Integer quantidade, Double preco_total) {
+        this.cliente_id = cliente_id;
+        this.restaurante_id = restaurante_id;
+        this.produto_id = produto_id;
         this.quantidade = quantidade;
+        this.preco_total = preco_total;
     }
 
     public Integer getId_pedido() {
@@ -24,28 +26,28 @@ public class Pedido {
         this.id_pedido = id_pedido;
     }
 
-    public String getNome() {
-        return nome;
+    public Integer getCliente_id() {
+        return cliente_id;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setCliente_id(Integer cliente_id) {
+        this.cliente_id = cliente_id;
     }
 
-    public String getDescricao() {
-        return descricao;
+    public Integer getRestaurante_id() {
+        return restaurante_id;
     }
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
+    public void setRestaurante_id(Integer restaurante_id) {
+        this.restaurante_id = restaurante_id;
     }
 
-    public Double getPreco() {
-        return preco;
+    public Integer getProduto_id() {
+        return produto_id;
     }
 
-    public void setPreco(Double preco) {
-        this.preco = preco;
+    public void setProduto_id(Integer produto_id) {
+        this.produto_id = produto_id;
     }
 
     public Integer getQuantidade() {
@@ -56,14 +58,23 @@ public class Pedido {
         this.quantidade = quantidade;
     }
 
+    public Double getPreco_total() {
+        return preco_total;
+    }
+
+    public void setPreco_total(Double preco_total) {
+        this.preco_total = preco_total;
+    }
+
     @Override
     public String toString() {
         return "Pedido {" +
                 "id=" + id_pedido +
-                ", nome='" + nome + '\'' +
-                ", descricao='" + descricao + '\'' +
-                ", preco=" + preco +
+                ", cliente_id=" + cliente_id +
+                ", restaurante_id=" + restaurante_id +
+                ", produto_id=" + produto_id +
                 ", quantidade=" + quantidade +
+                ", preco_total=" + preco_total +
                 '}';
     }
 }

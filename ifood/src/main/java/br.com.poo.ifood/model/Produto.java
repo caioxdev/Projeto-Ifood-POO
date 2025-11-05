@@ -2,18 +2,18 @@ package br.com.poo.ifood.model;
 
 public class Produto {
     private Integer id_produto;
+    private String nome;
     private String descricao;
     private Integer quantidade;
     private Double preco;
-    private String nome;
 
     public Produto() {}
 
-    public Produto (String descricao, Integer quantidade, Double preco, String nome) {
+    public Produto(String nome, String descricao, Integer quantidade, Double preco) {
+        this.nome = nome;
         this.descricao = descricao;
         this.quantidade = quantidade;
         this.preco = preco;
-        this.nome = nome;
     }
 
     public Integer getId_produto() {
@@ -22,6 +22,14 @@ public class Produto {
 
     public void setId_produto(Integer id_produto) {
         this.id_produto = id_produto;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public String getDescricao() {
@@ -46,14 +54,6 @@ public class Produto {
 
     public void setPreco(Double preco) {
         this.preco = preco;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
     }
 
     @Override
