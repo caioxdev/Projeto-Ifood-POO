@@ -55,6 +55,7 @@ public class Pedido {
     public void setQuantidade(Integer quantidade) {
         this.quantidade = quantidade;
     }
+
     @Override
     public String toString() {
         return "Pedido {" +
