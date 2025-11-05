@@ -1,18 +1,28 @@
 package br.com.poo.ifood.model;
 
-public class Cliente {
+public class SuperAdmin {
+
+    private Integer id_superadmin;
     private String nome;
     private String email;
     private String senha;
     private String telefone;
 
-    public Cliente() {}
+    public SuperAdmin() {}
 
-    public Cliente(String nome, String email, String senha, String telefone) {
+    public SuperAdmin(String nome, String email, String senha, String telefone) {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.telefone = telefone;
+    }
+
+    public Integer getId_superadmin() {
+        return id_superadmin;
+    }
+
+    public void setId_superadmin(Integer id_superadmin) {
+        this.id_superadmin = id_superadmin;
     }
 
     public String getNome() {
@@ -48,8 +58,9 @@ public class Cliente {
     }
     @Override
     public String toString() {
-        return "Cliente {" +
-                "nome='" + nome + '\'' +
+        return "SuperAdmin {" +
+                "id=" + id_superadmin +
+                ", nome='" + nome + '\'' +
                 ", email='" + email + '\'' +
                 ", telefone='" + telefone + '\'' +
                 '}';

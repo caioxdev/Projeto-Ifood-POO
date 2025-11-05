@@ -55,4 +55,14 @@ public class Produto {
     public void setNome(String nome) {
         this.nome = nome;
     }
+    @Override
+    public String toString() {
+        return "Produto {" +
+                "id=" + id_produto +
+                ", nome='" + nome + '\'' +
+                ", descricao='" + descricao + '\'' +
+                ", quantidade=" + quantidade +
+                ", preco=" + preco +
+                '}';
+    }
 }

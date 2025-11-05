@@ -56,4 +56,14 @@ public class Restaurante {
     public void setAvaliacao(double avaliacao) {
         this.avaliacao = avaliacao;
     }
+    @Override
+    public String toString() {
+        return "Restaurante {" +
+                "nome='" + nome + '\'' +
+                ", telefone='" + telefone + '\'' +
+                ", endereco='" + endereco + '\'' +
+                ", categoria='" + categoria + '\'' +
+                ", avaliacao=" + avaliacao +
+                '}';
+    }
 }

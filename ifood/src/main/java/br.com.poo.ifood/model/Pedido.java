@@ -55,4 +55,14 @@ public class Pedido {
     public void setQuantidade(Integer quantidade) {
         this.quantidade = quantidade;
     }
+    @Override
+    public String toString() {
+        return "Pedido {" +
+                "id=" + id_pedido +
+                ", nome='" + nome + '\'' +
+                ", descricao='" + descricao + '\'' +
+                ", preco=" + preco +
+                ", quantidade=" + quantidade +
+                '}';
+    }
 }
