@@ -7,8 +7,8 @@ import java.sql.SQLException;
 public class Conexao {
 
     private static final String URL = "jdbc:mysql://localhost:3306/projeto_ifood";
-    private static final String USER = "ifood_user";
-    private static final String PASSWORD = "1234";
+    private static final String USER = "root";
+    private static final String PASSWORD = "c@tolic@";
 
     public static Connection getConnection() {
         try {
