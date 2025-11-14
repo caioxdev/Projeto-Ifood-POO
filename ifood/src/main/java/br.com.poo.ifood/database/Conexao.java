@@ -12,12 +12,19 @@ public class Conexao {
 
     public static Connection getConnection() {
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
             Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
             System.out.println("SUCESSO: Conectado com sucesso ao banco!");
             return conn;
+
+        } catch (ClassNotFoundException e) {
+            System.out.println("ERRO: Drive JDBC não encontrado!");
+            throw new RuntimeException(e);
+
         } catch (SQLException e) {
-            System.out.println("ERRO: Erro ao conectar: " + e.getMessage());
-            return null;
+            System.out.println("ERRO: Falha ao conectar ao banco de dados: " + e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
