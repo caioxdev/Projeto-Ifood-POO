@@ -1,41 +1,55 @@
 package br.com.poo.ifood.controller;
 
-import java.util.Scanner;
+import br.com.poo.ifood.database.Conexao;
+import br.com.poo.ifood.model.Pedido;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PedidoController {
-    private Scanner sc = new Scanner(System.in);
 
-    public void menu() {
-        int opcao;
-        do {
-            System.out.println("\n=== Menu Pedido ===");
-            System.out.println("1 - Fazer Pedido");
-            System.out.println("2 - Listar Pedidos (Cliente)");
-            System.out.println("3 - Listar Pedidos (Restaurante)");
-            System.out.println("0 - Voltar");
-            System.out.print("Escolha: ");
-            opcao = sc.nextInt();
-            sc.nextLine();
+    public void criar(Pedido p) {
+        String sql = "INSERT INTO pedido (cliente_id, restaurante_id, produto_id, quantidade, preco_total) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, p.getCliente_id());
+            stmt.setInt(2, p.getRestaurante_id());
+            stmt.setInt(3, p.getProduto_id());
+            stmt.setInt(4, p.getQuantidade());
+            stmt.setDouble(5, p.getPreco_total());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Erro ao criar pedido: " + e.getMessage());
+        }
+    }
 
-            switch (opcao) {
-                case 1 -> fazerPedido();
-                case 2 -> listarPedidosCliente();
-                case 3 -> listarPedidosRestaurante();
-                case 0 -> System.out.println("Voltando...");
-                default -> System.out.println("Opção inválida!");
+    public List<Pedido> listar() {
+        List<Pedido> lista = new ArrayList<>();
+        String sql = "SELECT * FROM pedido";
+        try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                Pedido p = new Pedido();
+                p.setId_pedido(rs.getInt("id_pedido"));
+                p.setCliente_id(rs.getInt("cliente_id"));
+                p.setRestaurante_id(rs.getInt("restaurante_id"));
+                p.setProduto_id(rs.getInt("produto_id"));
+                p.setQuantidade(rs.getInt("quantidade"));
+                p.setPreco_total(rs.getDouble("preco_total"));
+                lista.add(p);
             }
-        } while (opcao != 0);
+        } catch (SQLException e) {
+            System.out.println("Erro ao listar pedidos: " + e.getMessage());
+        }
+        return lista;
     }
 
-    public void fazerPedido() {
-        System.out.println("Realizando novo pedido...");
-    }
-
-    public void listarPedidosCliente() {
-        System.out.println("Listando pedidos do cliente...");
-    }
-
-    public void listarPedidosRestaurante() {
-        System.out.println("Listando pedidos do restaurante...");
+    public void deletar(int id) {
+        String sql = "DELETE FROM pedido WHERE id_pedido=?";
+        try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Erro ao deletar pedido: " + e.getMessage());
+        }
     }
 }

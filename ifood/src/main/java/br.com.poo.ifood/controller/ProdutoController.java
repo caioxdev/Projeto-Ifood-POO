@@ -1,41 +1,67 @@
 package br.com.poo.ifood.controller;
 
-import java.util.Scanner;
+import br.com.poo.ifood.database.Conexao;
+import br.com.poo.ifood.model.Produto;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProdutoController {
-    private Scanner sc = new Scanner(System.in);
 
-    public void menu() {
-        int opcao;
-        do {
-            System.out.println("\n=== Menu Produto ===");
-            System.out.println("1 - Cadastrar Produto");
-            System.out.println("2 - Listar Produtos");
-            System.out.println("3 - Excluir Produto");
-            System.out.println("0 - Voltar");
-            System.out.print("Escolha: ");
-            opcao = sc.nextInt();
-            sc.nextLine();
+    public void criar(Produto p) {
+        String sql = "INSERT INTO produto (nome, descricao, quantidade, preco) VALUES (?, ?, ?, ?)";
+        try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, p.getNome());
+            stmt.setString(2, p.getDescricao());
+            stmt.setInt(3, p.getQuantidade());
+            stmt.setDouble(4, p.getPreco());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Erro ao criar produto: " + e.getMessage());
+        }
+    }
 
-            switch (opcao) {
-                case 1 -> cadastrar();
-                case 2 -> listar();
-                case 3 -> excluir();
-                case 0 -> System.out.println("Voltando...");
-                default -> System.out.println("Opção inválida!");
+    public List<Produto> listar() {
+        List<Produto> lista = new ArrayList<>();
+        String sql = "SELECT * FROM produto";
+        try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                Produto p = new Produto();
+                p.setId_produto(rs.getInt("id_produto"));
+                p.setNome(rs.getString("nome"));
+                p.setDescricao(rs.getString("descricao"));
+                p.setQuantidade(rs.getInt("quantidade"));
+                p.setPreco(rs.getDouble("preco"));
+                lista.add(p);
             }
-        } while (opcao != 0);
+        } catch (SQLException e) {
+            System.out.println("Erro ao listar produtos: " + e.getMessage());
+        }
+        return lista;
     }
 
-    public void cadastrar() {
-        System.out.println("Cadastrando novo produto...");
+    public void atualizar(Produto p) {
+        String sql = "UPDATE produto SET nome=?, descricao=?, quantidade=?, preco=? WHERE id_produto=?";
+        try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, p.getNome());
+            stmt.setString(2, p.getDescricao());
+            stmt.setInt(3, p.getQuantidade());
+            stmt.setDouble(4, p.getPreco());
+            stmt.setInt(5, p.getId_produto());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar produto: " + e.getMessage());
+        }
     }
 
-    public void listar() {
-        System.out.println("Listando produtos cadastrados...");
-    }
-
-    public void excluir() {
-        System.out.println("Excluindo produto...");
+    public void deletar(int id) {
+        String sql = "DELETE FROM produto WHERE id_produto=?";
+        try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Erro ao deletar produto: " + e.getMessage());
+        }
     }
 }

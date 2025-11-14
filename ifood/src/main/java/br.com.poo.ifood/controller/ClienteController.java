@@ -1,31 +1,67 @@
 package br.com.poo.ifood.controller;
 
-import java.util.Scanner;
+import br.com.poo.ifood.database.Conexao;
+import br.com.poo.ifood.model.Cliente;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClienteController {
-    private Scanner sc = new Scanner(System.in);
 
-    public void menu() {
-        int opcao;
-        do {
-            System.out.println("\n=== Menu Cliente ===");
-            System.out.println("1 - Ver Restaurantes");
-            System.out.println("2 - Ver Categorias");
-            System.out.println("3 - Fazer Pedido");
-            System.out.println("4 - Consultar Pedidos");
-            System.out.println("0 - Voltar");
-            System.out.print("Escolha: ");
-            opcao = sc.nextInt();
-            sc.nextLine();
+    public void criar(Cliente c) {
+        String sql = "INSERT INTO cliente (nome, email, senha, telefone) VALUES (?, ?, ?, ?)";
+        try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, c.getNome());
+            stmt.setString(2, c.getEmail());
+            stmt.setString(3, c.getSenha());
+            stmt.setString(4, c.getTelefone());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Erro ao criar cliente: " + e.getMessage());
+        }
+    }
 
-            switch (opcao) {
-                case 1 -> new RestauranteController().listar();
-                case 2 -> new CategoriaController().listar();
-                case 3 -> new PedidoController().fazerPedido();
-                case 4 -> new PedidoController().listarPedidosCliente();
-                case 0 -> System.out.println("Voltando ao menu principal...");
-                default -> System.out.println("Opção inválida!");
+    public List<Cliente> listar() {
+        List<Cliente> lista = new ArrayList<>();
+        String sql = "SELECT * FROM cliente";
+        try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                Cliente c = new Cliente();
+                c.setId_cliente(rs.getInt("id_cliente"));
+                c.setNome(rs.getString("nome"));
+                c.setEmail(rs.getString("email"));
+                c.setSenha(rs.getString("senha"));
+                c.setTelefone(rs.getString("telefone"));
+                lista.add(c);
             }
-        } while (opcao != 0);
+        } catch (SQLException e) {
+            System.out.println("Erro ao listar clientes: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    public void atualizar(Cliente c) {
+        String sql = "UPDATE cliente SET nome=?, email=?, senha=?, telefone=? WHERE id_cliente=?";
+        try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, c.getNome());
+            stmt.setString(2, c.getEmail());
+            stmt.setString(3, c.getSenha());
+            stmt.setString(4, c.getTelefone());
+            stmt.setInt(5, c.getId_cliente());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar cliente: " + e.getMessage());
+        }
+    }
+
+    public void deletar(int id) {
+        String sql = "DELETE FROM cliente WHERE id_cliente=?";
+        try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Erro ao deletar cliente: " + e.getMessage());
+        }
     }
 }
