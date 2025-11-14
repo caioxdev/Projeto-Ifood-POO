@@ -1,7 +1,7 @@
 package br.com.poo.ifood.model;
 
 public class SuperAdmin {
-    private Integer id_superadmin;
+    private int id_superadmin;
     private String nome;
     private String email;
     private String senha;
@@ -16,11 +16,11 @@ public class SuperAdmin {
         this.telefone = telefone;
     }
 
-    public Integer getId_superadmin() {
+    public int getId_superadmin() {
         return id_superadmin;
     }
 
-    public void setId_superadmin(Integer id_superadmin) {
+    public void setId_superadmin(int id_superadmin) {
         this.id_superadmin = id_superadmin;
     }
 
@@ -58,11 +58,6 @@ public class SuperAdmin {
 
     @Override
     public String toString() {
-        return "SuperAdmin {" +
-                "id=" + id_superadmin +
-                ", nome='" + nome + '\'' +
-                ", email='" + email + '\'' +
-                ", telefone='" + telefone + '\'' +
-                '}';
+        return "SuperAdmin { id=" + id_superadmin + ", nome='" + nome + "' }";
     }
 }

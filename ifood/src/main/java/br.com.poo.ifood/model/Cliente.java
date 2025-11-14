@@ -1,7 +1,7 @@
 package br.com.poo.ifood.model;
 
 public class Cliente {
-    private Integer id_cliente;
+    private int id_cliente;
     private String nome;
     private String email;
     private String senha;
@@ -16,11 +16,11 @@ public class Cliente {
         this.telefone = telefone;
     }
 
-    public Integer getId_cliente() {
+    public int getId_cliente() {
         return id_cliente;
     }
 
-    public void setId_cliente(Integer id_cliente) {
+    public void setId_cliente(int id_cliente) {
         this.id_cliente = id_cliente;
     }
 
@@ -58,11 +58,6 @@ public class Cliente {
 
     @Override
     public String toString() {
-        return "Cliente {" +
-                "id=" + id_cliente +
-                ", nome='" + nome + '\'' +
-                ", email='" + email + '\'' +
-                ", telefone='" + telefone + '\'' +
-                '}';
+        return "Cliente { id=" + id_cliente + ", nome='" + nome + "', email='" + email + "', telefone='" + telefone + "' }";
     }
 }

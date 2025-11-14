@@ -1,26 +1,26 @@
 package br.com.poo.ifood.model;
 
 public class Produto {
-    private Integer id_produto;
+    private int id_produto;
     private String nome;
     private String descricao;
-    private Integer quantidade;
-    private Double preco;
+    private int quantidade;
+    private double preco;
 
     public Produto() {}
 
-    public Produto(String nome, String descricao, Integer quantidade, Double preco) {
+    public Produto(String nome, String descricao, int quantidade, double preco) {
         this.nome = nome;
         this.descricao = descricao;
         this.quantidade = quantidade;
         this.preco = preco;
     }
 
-    public Integer getId_produto() {
+    public int getId_produto() {
         return id_produto;
     }
 
-    public void setId_produto(Integer id_produto) {
+    public void setId_produto(int id_produto) {
         this.id_produto = id_produto;
     }
 
@@ -40,30 +40,24 @@ public class Produto {
         this.descricao = descricao;
     }
 
-    public Integer getQuantidade() {
+    public int getQuantidade() {
         return quantidade;
     }
 
-    public void setQuantidade(Integer quantidade) {
+    public void setQuantidade(int quantidade) {
         this.quantidade = quantidade;
     }
 
-    public Double getPreco() {
+    public double getPreco() {
         return preco;
     }
 
-    public void setPreco(Double preco) {
+    public void setPreco(double preco) {
         this.preco = preco;
     }
 
     @Override
     public String toString() {
-        return "Produto {" +
-                "id=" + id_produto +
-                ", nome='" + nome + '\'' +
-                ", descricao='" + descricao + '\'' +
-                ", quantidade=" + quantidade +
-                ", preco=" + preco +
-                '}';
+        return "Produto { id=" + id_produto + ", nome='" + nome + "', preco=" + preco + " }";
     }
 }

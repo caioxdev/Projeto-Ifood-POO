@@ -1,16 +1,16 @@
 package br.com.poo.ifood.model;
 
 public class Restaurante {
-    private Integer id_restaurante;
+    private int id_restaurante;
     private String nome;
     private String telefone;
     private String endereco;
-    private Integer categoria_id;
-    private Double avaliacao;
+    private int categoria_id;
+    private double avaliacao;
 
     public Restaurante() {}
 
-    public Restaurante(String nome, String telefone, String endereco, Integer categoria_id, Double avaliacao) {
+    public Restaurante(String nome, String telefone, String endereco, int categoria_id, double avaliacao) {
         this.nome = nome;
         this.telefone = telefone;
         this.endereco = endereco;
@@ -18,11 +18,11 @@ public class Restaurante {
         this.avaliacao = avaliacao;
     }
 
-    public Integer getId_restaurante() {
+    public int getId_restaurante() {
         return id_restaurante;
     }
 
-    public void setId_restaurante(Integer id_restaurante) {
+    public void setId_restaurante(int id_restaurante) {
         this.id_restaurante = id_restaurante;
     }
 
@@ -50,31 +50,24 @@ public class Restaurante {
         this.endereco = endereco;
     }
 
-    public Integer getCategoria_id() {
+    public int getCategoria_id() {
         return categoria_id;
     }
 
-    public void setCategoria_id(Integer categoria_id) {
+    public void setCategoria_id(int categoria_id) {
         this.categoria_id = categoria_id;
     }
 
-    public Double getAvaliacao() {
+    public double getAvaliacao() {
         return avaliacao;
     }
 
-    public void setAvaliacao(Double avaliacao) {
+    public void setAvaliacao(double avaliacao) {
         this.avaliacao = avaliacao;
     }
 
     @Override
     public String toString() {
-        return "Restaurante {" +
-                "id=" + id_restaurante +
-                ", nome='" + nome + '\'' +
-                ", telefone='" + telefone + '\'' +
-                ", endereco='" + endereco + '\'' +
-                ", categoria_id=" + categoria_id +
-                ", avaliacao=" + avaliacao +
-                '}';
+        return "Restaurante { id=" + id_restaurante + ", nome='" + nome + "', categoria_id=" + categoria_id + " }";
     }
 }
