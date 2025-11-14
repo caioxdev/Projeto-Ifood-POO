@@ -2,67 +2,120 @@ package br.com.poo.ifood.dao;
 
 import br.com.poo.ifood.database.Conexao;
 import br.com.poo.ifood.model.Restaurante;
+
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RestauranteDAO {
 
-    public void create(Restaurante restaurante) {
-        String sql = "INSERT INTO Restaurante (nome, telefone, endereco, categoria_id, avaliacao) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, restaurante.getNome());
-            stmt.setString(2, restaurante.getTelefone());
-            stmt.setString(3, restaurante.getEndereco());
-            stmt.setInt(4, restaurante.getCategoria_id());
-            stmt.setDouble(5, restaurante.getAvaliacao());
+    public boolean create(Restaurante r) {
+        String sql = "INSERT INTO restaurante (nome, telefone, endereco, categoria_id, avaliacao) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = Conexao.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, r.getNome());
+            stmt.setString(2, r.getTelefone());
+            stmt.setString(3, r.getEndereco());
+            stmt.setInt(4, r.getCategoriaId());
+            stmt.setDouble(5, r.getAvaliacao());
+
             stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            return true;
+
+        } catch (Exception e) {
+            System.out.println("RestauranteDAO.create: " + e.getMessage());
+            return false;
         }
     }
 
-    public List<Restaurante> readAll() {
-        List<Restaurante> restaurantes = new ArrayList<>();
-        String sql = "SELECT * FROM Restaurante";
-        try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+    public List<Restaurante> findAll() {
+        List<Restaurante> lista = new ArrayList<>();
+        String sql = "SELECT * FROM restaurante";
+
+        try (Connection conn = Conexao.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
             while (rs.next()) {
                 Restaurante r = new Restaurante();
-                r.setId_restaurante(rs.getInt("id_restaurante"));
+                r.setId(rs.getInt("id_restaurante"));
                 r.setNome(rs.getString("nome"));
                 r.setTelefone(rs.getString("telefone"));
                 r.setEndereco(rs.getString("endereco"));
-                r.setCategoria_id(rs.getInt("categoria_id"));
+                r.setCategoriaId(rs.getInt("categoria_id"));
                 r.setAvaliacao(rs.getDouble("avaliacao"));
-                restaurantes.add(r);
+                lista.add(r);
             }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
+
+        } catch (Exception e) {
+            System.out.println("RestauranteDAO.findAll: " + e.getMessage());
         }
-        return restaurantes;
+        return lista;
     }
 
-    public void update(Restaurante restaurante) {
-        String sql = "UPDATE Restaurante SET nome=?, telefone=?, endereco=?, categoria_id=?, avaliacao=? WHERE id_restaurante=?";
-        try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, restaurante.getNome());
-            stmt.setString(2, restaurante.getTelefone());
-            stmt.setString(3, restaurante.getEndereco());
-            stmt.setInt(4, restaurante.getCategoria_id());
-            stmt.setDouble(5, restaurante.getAvaliacao());
-            stmt.setInt(6, restaurante.getId_restaurante());
+    public Restaurante findById(int id) {
+        String sql = "SELECT * FROM restaurante WHERE id_restaurante = ?";
+        Restaurante r = null;
+
+        try (Connection conn = Conexao.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                r = new Restaurante();
+                r.setId(rs.getInt("id_restaurante"));
+                r.setNome(rs.getString("nome"));
+                r.setTelefone(rs.getString("telefone"));
+                r.setEndereco(rs.getString("endereco"));
+                r.setCategoriaId(rs.getInt("categoria_id"));
+                r.setAvaliacao(rs.getDouble("avaliacao"));
+            }
+
+        } catch (Exception e) {
+            System.out.println("RestauranteDAO.findById: " + e.getMessage());
+        }
+
+        return r;
+    }
+
+    public boolean update(Restaurante r) {
+        String sql = "UPDATE restaurante SET nome=?, telefone=?, endereco=?, categoria_id=?, avaliacao=? WHERE id_restaurante=?";
+
+        try (Connection conn = Conexao.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, r.getNome());
+            stmt.setString(2, r.getTelefone());
+            stmt.setString(3, r.getEndereco());
+            stmt.setInt(4, r.getCategoriaId());
+            stmt.setDouble(5, r.getAvaliacao());
+            stmt.setInt(6, r.getId());
+
             stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            return true;
+
+        } catch (Exception e) {
+            System.out.println("RestauranteDAO.update: " + e.getMessage());
+            return false;
         }
     }
 
-    public void delete(int id) {
-        String sql = "DELETE FROM Restaurante WHERE id_restaurante=?";
-        try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+    public boolean delete(int id) {
+        String sql = "DELETE FROM restaurante WHERE id_restaurante = ?";
+
+        try (Connection conn = Conexao.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setInt(1, id);
             stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            return true;
+
+        } catch (Exception e) {
+            System.out.println("RestauranteDAO.delete: " + e.getMessage());
+            return false;
         }
     }
 }

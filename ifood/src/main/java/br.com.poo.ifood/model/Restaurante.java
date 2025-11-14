@@ -1,29 +1,30 @@
 package br.com.poo.ifood.model;
 
 public class Restaurante {
-    private int id_restaurante;
+    private int id;
     private String nome;
     private String telefone;
     private String endereco;
-    private int categoria_id;
+    private int categoriaId;
     private double avaliacao;
 
-    public Restaurante() {}
+    public Restaurante() {
+    }
 
-    public Restaurante(String nome, String telefone, String endereco, int categoria_id, double avaliacao) {
+    public Restaurante(String nome, String telefone, String endereco, int categoriaId, double avaliacao) {
         this.nome = nome;
         this.telefone = telefone;
         this.endereco = endereco;
-        this.categoria_id = categoria_id;
+        this.categoriaId = categoriaId;
         this.avaliacao = avaliacao;
     }
 
-    public int getId_restaurante() {
-        return id_restaurante;
+    public int getId() {
+        return id;
     }
 
-    public void setId_restaurante(int id_restaurante) {
-        this.id_restaurante = id_restaurante;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNome() {
@@ -50,12 +51,12 @@ public class Restaurante {
         this.endereco = endereco;
     }
 
-    public int getCategoria_id() {
-        return categoria_id;
+    public int getCategoriaId() {
+        return categoriaId;
     }
 
-    public void setCategoria_id(int categoria_id) {
-        this.categoria_id = categoria_id;
+    public void setCategoriaId(int categoriaId) {
+        this.categoriaId = categoriaId;
     }
 
     public double getAvaliacao() {
@@ -68,6 +69,6 @@ public class Restaurante {
 
     @Override
     public String toString() {
-        return "Restaurante { id=" + id_restaurante + ", nome='" + nome + "', categoria_id=" + categoria_id + " }";
+        return id + " | " + nome + " | " + telefone + " | " + endereco + " | Cat: " + categoriaId + " | Aval: " + avaliacao;
     }
 }

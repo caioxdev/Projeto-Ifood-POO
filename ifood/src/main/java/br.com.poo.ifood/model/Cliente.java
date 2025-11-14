@@ -1,13 +1,14 @@
 package br.com.poo.ifood.model;
 
 public class Cliente {
-    private int id_cliente;
+    private int id;
     private String nome;
     private String email;
     private String senha;
     private String telefone;
 
-    public Cliente() {}
+    public Cliente() {
+    }
 
     public Cliente(String nome, String email, String senha, String telefone) {
         this.nome = nome;
@@ -16,12 +17,12 @@ public class Cliente {
         this.telefone = telefone;
     }
 
-    public int getId_cliente() {
-        return id_cliente;
+    public int getId() {
+        return id;
     }
 
-    public void setId_cliente(int id_cliente) {
-        this.id_cliente = id_cliente;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNome() {
@@ -58,6 +59,6 @@ public class Cliente {
 
     @Override
     public String toString() {
-        return "Cliente { id=" + id_cliente + ", nome='" + nome + "', email='" + email + "', telefone='" + telefone + "' }";
+        return id + " | " + nome + " | " + email;
     }
 }

@@ -3,66 +3,98 @@ package br.com.poo.ifood.dao;
 import br.com.poo.ifood.database.Conexao;
 import br.com.poo.ifood.model.Pedido;
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PedidoDAO {
 
-    public void create(Pedido pedido) {
-        String sql = "INSERT INTO Pedido (cliente_id, restaurante_id, produto_id, quantidade, preco_total) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, pedido.getCliente_id());
-            stmt.setInt(2, pedido.getRestaurante_id());
-            stmt.setInt(3, pedido.getProduto_id());
-            stmt.setInt(4, pedido.getQuantidade());
-            stmt.setDouble(5, pedido.getPreco_total());
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    public List<Pedido> readAll() {
-        List<Pedido> pedidos = new ArrayList<>();
-        String sql = "SELECT * FROM Pedido";
-        try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                Pedido p = new Pedido();
-                p.setId_pedido(rs.getInt("id_pedido"));
-                p.setCliente_id(rs.getInt("cliente_id"));
-                p.setRestaurante_id(rs.getInt("restaurante_id"));
-                p.setProduto_id(rs.getInt("produto_id"));
-                p.setQuantidade(rs.getInt("quantidade"));
-                p.setPreco_total(rs.getDouble("preco_total"));
-                pedidos.add(p);
+    public void create(Pedido p) {
+        String sql = "INSERT INTO pedido (cliente_id, restaurante_id, produto_id, quantidade, preco_total) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = Conexao.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, p.getClienteId());
+            ps.setInt(2, p.getRestauranteId());
+            ps.setInt(3, p.getProdutoId());
+            ps.setInt(4, p.getQuantidade());
+            ps.setDouble(5, p.getPrecoTotal());
+            ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) p.setId(rs.getInt(1));
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("PedidoDAO.create: " + e.getMessage());
         }
-        return pedidos;
     }
 
-    public void update(Pedido pedido) {
-        String sql = "UPDATE Pedido SET cliente_id=?, restaurante_id=?, produto_id=?, quantidade=?, preco_total=? WHERE id_pedido=?";
-        try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, pedido.getCliente_id());
-            stmt.setInt(2, pedido.getRestaurante_id());
-            stmt.setInt(3, pedido.getProduto_id());
-            stmt.setInt(4, pedido.getQuantidade());
-            stmt.setDouble(5, pedido.getPreco_total());
-            stmt.setInt(6, pedido.getId_pedido());
-            stmt.executeUpdate();
+    public Pedido findById(int id) {
+        String sql = "SELECT * FROM pedido WHERE id_pedido = ?";
+        try (Connection conn = Conexao.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Pedido p = new Pedido();
+                    p.setId(rs.getInt("id_pedido"));
+                    p.setClienteId(rs.getInt("cliente_id"));
+                    p.setRestauranteId(rs.getInt("restaurante_id"));
+                    p.setProdutoId(rs.getInt("produto_id"));
+                    p.setQuantidade(rs.getInt("quantidade"));
+                    p.setPrecoTotal(rs.getDouble("preco_total"));
+                    return p;
+                }
+            }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("PedidoDAO.findById: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public List<Pedido> findAll() {
+        List<Pedido> lista = new ArrayList<>();
+        String sql = "SELECT * FROM pedido";
+        try (Connection conn = Conexao.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Pedido p = new Pedido();
+                p.setId(rs.getInt("id_pedido"));
+                p.setClienteId(rs.getInt("cliente_id"));
+                p.setRestauranteId(rs.getInt("restaurante_id"));
+                p.setProdutoId(rs.getInt("produto_id"));
+                p.setQuantidade(rs.getInt("quantidade"));
+                p.setPrecoTotal(rs.getDouble("preco_total"));
+                lista.add(p);
+            }
+        } catch (SQLException e) {
+            System.out.println("PedidoDAO.findAll: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    public void update(Pedido p) {
+        String sql = "UPDATE pedido SET cliente_id=?, restaurante_id=?, produto_id=?, quantidade=?, preco_total=? WHERE id_pedido = ?";
+        try (Connection conn = Conexao.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, p.getClienteId());
+            ps.setInt(2, p.getRestauranteId());
+            ps.setInt(3, p.getProdutoId());
+            ps.setInt(4, p.getQuantidade());
+            ps.setDouble(5, p.getPrecoTotal());
+            ps.setInt(6, p.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("PedidoDAO.update: " + e.getMessage());
         }
     }
 
     public void delete(int id) {
-        String sql = "DELETE FROM Pedido WHERE id_pedido=?";
-        try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            stmt.executeUpdate();
+        String sql = "DELETE FROM pedido WHERE id_pedido = ?";
+        try (Connection conn = Conexao.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("PedidoDAO.delete: " + e.getMessage());
         }
     }
 }

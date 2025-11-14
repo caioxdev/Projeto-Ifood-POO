@@ -1,70 +1,62 @@
 package br.com.poo.ifood.controller;
 
-import br.com.poo.ifood.database.Conexao;
+import br.com.poo.ifood.dao.RestauranteDAO;
 import br.com.poo.ifood.model.Restaurante;
 
-import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class RestauranteController {
+    private RestauranteDAO dao = new RestauranteDAO();
 
-    public void criar(Restaurante r) {
-        String sql = "INSERT INTO restaurante (nome, telefone, endereco, categoria_id, avaliacao) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, r.getNome());
-            stmt.setString(2, r.getTelefone());
-            stmt.setString(3, r.getEndereco());
-            stmt.setInt(4, r.getCategoria_id());
-            stmt.setDouble(5, r.getAvaliacao());
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Erro ao criar restaurante: " + e.getMessage());
-        }
+    public boolean create(Restaurante r) {
+        return dao.create(r);
     }
 
-    public List<Restaurante> listar() {
-        List<Restaurante> lista = new ArrayList<>();
-        String sql = "SELECT * FROM restaurante";
-        try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                Restaurante r = new Restaurante();
-                r.setId_restaurante(rs.getInt("id_restaurante"));
-                r.setNome(rs.getString("nome"));
-                r.setTelefone(rs.getString("telefone"));
-                r.setEndereco(rs.getString("endereco"));
-                r.setCategoria_id(rs.getInt("categoria_id"));
-                r.setAvaliacao(rs.getDouble("avaliacao"));
-                lista.add(r);
-            }
-        } catch (SQLException e) {
-            System.out.println("Erro ao listar restaurantes: " + e.getMessage());
-        }
-        return lista;
+    public List<Restaurante> findAll() {
+        return dao.findAll();
     }
 
-    public void atualizar(Restaurante r) {
-        String sql = "UPDATE restaurante SET nome=?, telefone=?, endereco=?, categoria_id=?, avaliacao=? WHERE id_restaurante=?";
-        try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, r.getNome());
-            stmt.setString(2, r.getTelefone());
-            stmt.setString(3, r.getEndereco());
-            stmt.setInt(4, r.getCategoria_id());
-            stmt.setDouble(5, r.getAvaliacao());
-            stmt.setInt(6, r.getId_restaurante());
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Erro ao atualizar restaurante: " + e.getMessage());
-        }
+    public Restaurante findById(int id) {
+        return dao.findById(id);
     }
 
-    public void deletar(int id) {
-        String sql = "DELETE FROM restaurante WHERE id_restaurante=?";
-        try (Connection conn = Conexao.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Erro ao deletar restaurante: " + e.getMessage());
+    public boolean update(Restaurante r) {
+        return dao.update(r);
+    }
+
+    public boolean delete(int id) {
+        return dao.delete(id);
+    }
+
+    public void atualizarViaTerminal(Scanner sc, int id) {
+        Restaurante r = dao.findById(id);
+        if (r == null) {
+            System.out.println("Restaurante não encontrado!");
+            return;
         }
+
+        System.out.print("Nome (" + r.getNome() + "): ");
+        String nome = sc.nextLine();
+        if (!nome.isEmpty()) r.setNome(nome);
+
+        System.out.print("Telefone (" + r.getTelefone() + "): ");
+        String telefone = sc.nextLine();
+        if (!telefone.isEmpty()) r.setTelefone(telefone);
+
+        System.out.print("Endereço (" + r.getEndereco() + "): ");
+        String endereco = sc.nextLine();
+        if (!endereco.isEmpty()) r.setEndereco(endereco);
+
+        System.out.print("Avaliação (" + r.getAvaliacao() + "): ");
+        String aval = sc.nextLine();
+        if (!aval.isEmpty()) r.setAvaliacao(Double.parseDouble(aval));
+
+        System.out.print("Categoria ID (" + r.getCategoriaId() + "): ");
+        String cat = sc.nextLine();
+        if (!cat.isEmpty()) r.setCategoriaId(Integer.parseInt(cat));
+
+        boolean ok = dao.update(r);
+        System.out.println(ok ? "Atualizado com sucesso." : "Erro ao atualizar.");
     }
 }
