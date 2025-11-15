@@ -1,7 +1,5 @@
 package br.com.poo.ifood;
 
-import br.com.poo.ifood.view.ClientePainelView;
-import br.com.poo.ifood.view.RestaurantePainelView;
 import br.com.poo.ifood.view.SuperAdminView;
 
 import java.util.Scanner;
@@ -10,57 +8,34 @@ public class App {
 
     public static void main(String[] args) {
 
-        System.out.println("Iniciando sistema com dados padrão...");
         Scanner sc = new Scanner(System.in);
+        int op;
 
-        int opcao = -1;
-
-        while (opcao != 0) {
+        do {
             System.out.println("\n====== IFOOD ======");
             System.out.println("1. Cliente");
             System.out.println("2. Restaurante");
             System.out.println("3. SuperAdmin (Pedidos)");
             System.out.println("0. Sair");
             System.out.print("Opção: ");
-            opcao = sc.nextInt();
-            sc.nextLine();
 
-            switch (opcao) {
-                // --- MENU CLIENTE ---
-                case 1 -> {
-                    System.out.print("Digite o ID de Cliente: ");
-                    int clienteId = sc.nextInt();
-                    sc.nextLine();
+            String line = sc.nextLine().trim();
+            if (line.isEmpty()) line = "0";
+            op = Integer.parseInt(line);
 
-                    // Construtor atual recebe apenas clienteId
-                    ClientePainelView clienteView = new ClientePainelView(clienteId);
-                    clienteView.mostrarMenu();
-                }
-
-                // --- MENU RESTAURANTE ---
-                case 2 -> {
-                    System.out.print("Digite o ID do Restaurante: ");
-                    int restauranteId = sc.nextInt();
-                    sc.nextLine();
-
-                    // Construtor que recebe restauranteId e Scanner
-                    RestaurantePainelView restauranteView = new RestaurantePainelView(restauranteId, sc);
-                    restauranteView.mostrarMenu();
-                }
-
-                // --- MENU SUPERADMIN ---
+            switch (op) {
+                case 1 -> System.out.println("Área do Cliente (em construção)...");
+                case 2 -> System.out.println("Área do Restaurante (em construção)...");
                 case 3 -> {
-                    // Construtor que recebe Scanner
+                    // Chama a view do SuperAdmin
                     SuperAdminView superAdminView = new SuperAdminView(sc);
-                    superAdminView.mostrarMenu();
+                    superAdminView.iniciar(); // login e menu completo
                 }
-
-                // --- SAIR ---
-                case 0 -> System.out.println("Saindo...");
-
+                case 0 -> System.out.println("Saindo do sistema...");
                 default -> System.out.println("Opção inválida!");
             }
-        }
+
+        } while (op != 0);
 
         sc.close();
     }

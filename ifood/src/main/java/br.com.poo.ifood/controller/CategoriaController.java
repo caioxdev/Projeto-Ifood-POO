@@ -1,30 +1,109 @@
 package br.com.poo.ifood.controller;
 
-import br.com.poo.ifood.dao.CategoriaDAO;
 import br.com.poo.ifood.model.Categoria;
+import br.com.poo.ifood.database.Conexao;
 
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CategoriaController {
-    private CategoriaDAO dao = new CategoriaDAO();
 
+    // Cadastrar categoria
     public boolean cadastrar(Categoria c) {
-        return dao.cadastrar(c); // aqui o dao deve retornar boolean
+        String sql = "INSERT INTO categoria (nome, descricao) VALUES (?, ?)";
+        try (Connection conn = Conexao.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, c.getNome());
+            ps.setString(2, c.getDescricao());
+
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
-    public boolean atualizar(Categoria c) {
-        return dao.atualizar(c); // dao deve retornar boolean
-    }
-
-    public boolean remover(int id) {
-        return dao.remover(id); // dao deve retornar boolean
-    }
-
+    // Listar todas as categorias
     public List<Categoria> listar() {
-        return dao.listar();
+        List<Categoria> lista = new ArrayList<>();
+        String sql = "SELECT * FROM categoria";
+
+        try (Connection conn = Conexao.getConnection();
+             Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+
+            while (rs.next()) {
+                Categoria c = new Categoria();
+                c.setId(rs.getInt("id_categoria"));
+                c.setNome(rs.getString("nome"));
+                c.setDescricao(rs.getString("descricao"));
+                lista.add(c);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return lista;
     }
 
+    // Buscar categoria por ID
     public Categoria buscarPorId(int id) {
-        return dao.buscarPorId(id);
+        String sql = "SELECT * FROM categoria WHERE id_categoria = ?";
+        try (Connection conn = Conexao.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                Categoria c = new Categoria();
+                c.setId(rs.getInt("id_categoria"));
+                c.setNome(rs.getString("nome"));
+                c.setDescricao(rs.getString("descricao"));
+                return c;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    // Atualizar categoria
+    public boolean atualizar(Categoria c) {
+        String sql = "UPDATE categoria SET nome = ?, descricao = ? WHERE id_categoria = ?";
+        try (Connection conn = Conexao.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, c.getNome());
+            ps.setString(2, c.getDescricao());
+            ps.setInt(3, c.getId());
+
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Remover categoria
+    public boolean remover(int id) {
+        String sql = "DELETE FROM categoria WHERE id_categoria = ?";
+        try (Connection conn = Conexao.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

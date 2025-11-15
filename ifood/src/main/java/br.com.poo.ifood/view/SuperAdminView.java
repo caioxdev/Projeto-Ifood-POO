@@ -24,10 +24,30 @@ public class SuperAdminView {
     private final CategoriaController categoriaController = new CategoriaController();
     private final PedidoController pedidoController = new PedidoController();
 
+    private SuperAdmin logado = null;
+
     public SuperAdminView(Scanner sc) {
         this.sc = sc;
     }
 
+    // --------------------- LOGIN ---------------------
+    public void loginMenu() {
+        System.out.println("\n--- LOGIN SUPERADMIN ---");
+        System.out.print("Email: ");
+        String email = sc.nextLine();
+        System.out.print("Senha: ");
+        String senha = sc.nextLine();
+
+        logado = superAdminController.login(email, senha);
+        if (logado != null) {
+            System.out.println("Login realizado com sucesso! Bem-vindo, " + logado.getNome());
+            mostrarMenu();
+        } else {
+            System.out.println("Email ou senha incorretos!");
+        }
+    }
+
+    // --------------------- MENU PRINCIPAL ---------------------
     public void mostrarMenu() {
         int op;
         do {
@@ -41,6 +61,7 @@ public class SuperAdminView {
             System.out.println("7. Listar Categorias");
             System.out.println("8. Menu Restaurante");
             System.out.println("9. Listar Todos os Pedidos");
+            System.out.println("10. Remover SuperAdmin");
             System.out.println("0. Sair");
             System.out.print("Opção: ");
 
@@ -58,13 +79,14 @@ public class SuperAdminView {
                 case 7 -> listarCategorias();
                 case 8 -> menuRestaurante();
                 case 9 -> listarTodosPedidos();
+                case 10 -> removerSuperAdmin();
                 case 0 -> System.out.println("Saindo...");
                 default -> System.out.println("Opção inválida.");
             }
         } while (op != 0);
     }
 
-    // --------------------- MÉTODOS DE CADASTRO ---------------------
+    // --------------------- MÉTODOS SUPERADMIN ---------------------
     private void cadastrarSuperAdmin() {
         System.out.print("Nome: ");
         String nome = sc.nextLine();
@@ -76,7 +98,6 @@ public class SuperAdminView {
         String telefone = sc.nextLine();
 
         SuperAdmin sa = new SuperAdmin(nome, email, senha, telefone);
-
         if (superAdminController.cadastrar(sa)) {
             System.out.println("SuperAdmin cadastrado com sucesso!");
         } else {
@@ -84,6 +105,31 @@ public class SuperAdminView {
         }
     }
 
+    private void listarSuperAdmins() {
+        List<SuperAdmin> admins = superAdminController.listar();
+        if (admins.isEmpty()) {
+            System.out.println("Nenhum SuperAdmin cadastrado.");
+        } else {
+            System.out.println("\n--- SUPERADMINS ---");
+            for (SuperAdmin sa : admins) {
+                System.out.println(sa.toString());
+            }
+        }
+    }
+
+    private void removerSuperAdmin() {
+        listarSuperAdmins();
+        System.out.print("Digite o ID do SuperAdmin a remover: ");
+        int id = Integer.parseInt(sc.nextLine());
+
+        if (superAdminController.remover(id)) {
+            System.out.println("SuperAdmin removido com sucesso!");
+        } else {
+            System.out.println("Erro ao remover SuperAdmin.");
+        }
+    }
+
+    // --------------------- MÉTODOS RESTAURANTE ---------------------
     private void cadastrarRestaurante() {
         System.out.print("Nome: ");
         String nome = sc.nextLine();
@@ -96,56 +142,13 @@ public class SuperAdminView {
         System.out.print("Avaliação (0-5): ");
         double avaliacao = Double.parseDouble(sc.nextLine());
 
-        Restaurante r = new Restaurante(nome, telefone, endereco, categoriaId, avaliacao);
-
-        if (restauranteController.cadastrar(r)) {
+        if (restauranteController.cadastrar(nome, telefone, endereco, categoriaId, avaliacao)) {
             System.out.println("Restaurante cadastrado com sucesso!");
         } else {
             System.out.println("Erro ao cadastrar restaurante.");
         }
     }
 
-    private void cadastrarProduto() {
-        listarRestaurantes();
-        System.out.print("ID do Restaurante: ");
-        int idRest = Integer.parseInt(sc.nextLine());
-
-        System.out.print("Nome do Produto: ");
-        String nome = sc.nextLine();
-        System.out.print("Descrição: ");
-        String descricao = sc.nextLine();
-        System.out.print("Quantidade: ");
-        int qtd = Integer.parseInt(sc.nextLine());
-        System.out.print("Preço: ");
-        double preco = Double.parseDouble(sc.nextLine());
-
-        Produto p = new Produto(idRest, nome, descricao, qtd, preco);
-
-        if (produtoController.cadastrar(p)) {
-            System.out.println("Produto cadastrado com sucesso!");
-        } else {
-            System.out.println("Erro ao cadastrar produto.");
-        }
-    }
-
-    private void cadastrarCategoria() {
-        System.out.print("Nome da Categoria: ");
-        String nome = sc.nextLine();
-        System.out.print("Descrição: ");
-        String descricao = sc.nextLine();
-
-        Categoria c = new Categoria();
-        c.setNome(nome);
-        c.setDescricao(descricao);
-
-        if (categoriaController.cadastrar(c)) {
-            System.out.println("Categoria cadastrada com sucesso!");
-        } else {
-            System.out.println("Erro ao cadastrar categoria.");
-        }
-    }
-
-    // --------------------- MÉTODOS DE LISTAGEM ---------------------
     private void listarRestaurantes() {
         List<Restaurante> restaurantes = restauranteController.listar();
         if (restaurantes.isEmpty()) {
@@ -163,6 +166,29 @@ public class SuperAdminView {
                                 " | Ativo: " + r.isAtivo()
                 );
             }
+        }
+    }
+
+    // --------------------- MÉTODOS PRODUTO ---------------------
+    private void cadastrarProduto() {
+        listarRestaurantes();
+        System.out.print("ID do Restaurante: ");
+        int idRest = Integer.parseInt(sc.nextLine());
+
+        System.out.print("Nome do Produto: ");
+        String nome = sc.nextLine();
+        System.out.print("Descrição: ");
+        String descricao = sc.nextLine();
+        System.out.print("Quantidade: ");
+        int qtd = Integer.parseInt(sc.nextLine());
+        System.out.print("Preço: ");
+        double preco = Double.parseDouble(sc.nextLine());
+
+        Produto p = new Produto(idRest, nome, descricao, qtd, preco);
+        if (produtoController.cadastrar(p)) {
+            System.out.println("Produto cadastrado com sucesso!");
+        } else {
+            System.out.println("Erro ao cadastrar produto.");
         }
     }
 
@@ -185,6 +211,24 @@ public class SuperAdminView {
                                 " | Descrição: " + p.getDescricao()
                 );
             }
+        }
+    }
+
+    // --------------------- MÉTODOS CATEGORIA ---------------------
+    private void cadastrarCategoria() {
+        System.out.print("Nome da Categoria: ");
+        String nome = sc.nextLine();
+        System.out.print("Descrição: ");
+        String descricao = sc.nextLine();
+
+        Categoria c = new Categoria();
+        c.setNome(nome);
+        c.setDescricao(descricao);
+
+        if (categoriaController.cadastrar(c)) {
+            System.out.println("Categoria cadastrada com sucesso!");
+        } else {
+            System.out.println("Erro ao cadastrar categoria.");
         }
     }
 
@@ -314,7 +358,6 @@ public class SuperAdminView {
             return;
         }
 
-        // Checa se o produto está em algum pedido
         if (produtoController.produtoEmPedido(idProduto)) {
             System.out.println("Não é possível remover este produto, pois ele já foi pedido.");
             return;
