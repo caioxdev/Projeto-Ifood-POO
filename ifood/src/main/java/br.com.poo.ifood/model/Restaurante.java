@@ -10,11 +10,13 @@ public class Restaurante {
     private double avaliacao;
     private boolean ativo;
 
+    // Construtor vazio
     public Restaurante() {
         this.id_restaurante = contador++;
         this.ativo = true;
     }
 
+    // Construtor existente: 5 parâmetros
     public Restaurante(String nome, String telefone, String endereco, int categoria_id, double avaliacao) {
         this.id_restaurante = contador++;
         this.nome = nome;
@@ -25,61 +27,35 @@ public class Restaurante {
         this.ativo = true;
     }
 
-    public int getId() {
-        return id_restaurante;
-    }
-
-    public void setId(int id) {
-        this.id_restaurante = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
+    // Construtor necessário para o DAO (3 parâmetros)
+    public Restaurante(int id_restaurante, String nome, String telefone) {
+        this.id_restaurante = id_restaurante;
         this.nome = nome;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
         this.telefone = telefone;
+        this.ativo = true;
     }
 
-    public String getEndereco() {
-        return endereco;
-    }
+    // Getters e Setters
+    public int getId() { return id_restaurante; }
+    public void setId(int id) { this.id_restaurante = id; }
 
-    public void setEndereco(String endereco) {
-        this.endereco = endereco;
-    }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
 
-    public int getCategoria_id() {
-        return categoria_id;
-    }
+    public String getTelefone() { return telefone; }
+    public void setTelefone(String telefone) { this.telefone = telefone; }
 
-    public void setCategoria_id(int categoria_id) {
-        this.categoria_id = categoria_id;
-    }
+    public String getEndereco() { return endereco; }
+    public void setEndereco(String endereco) { this.endereco = endereco; }
 
-    public double getAvaliacao() {
-        return avaliacao;
-    }
+    public int getCategoria_id() { return categoria_id; }
+    public void setCategoria_id(int categoria_id) { this.categoria_id = categoria_id; }
 
-    public void setAvaliacao(double avaliacao) {
-        this.avaliacao = avaliacao;
-    }
+    public double getAvaliacao() { return avaliacao; }
+    public void setAvaliacao(double avaliacao) { this.avaliacao = avaliacao; }
 
-    public boolean isAtivo() {
-        return ativo;
-    }
-
-    public void setAtivo(boolean ativo) {
-        this.ativo = ativo;
-    }
+    public boolean isAtivo() { return ativo; }
+    public void setAtivo(boolean ativo) { this.ativo = ativo; }
 
     @Override
     public String toString() {

@@ -3,28 +3,30 @@ package br.com.poo.ifood.controller;
 import br.com.poo.ifood.dao.RestauranteDAO;
 import br.com.poo.ifood.model.Restaurante;
 
-import java.util.List;
-
 public class RestauranteController {
-    private RestauranteDAO dao = new RestauranteDAO();
+    private RestauranteDAO dao;
 
-    public boolean cadastrar(Restaurante r) {
-        return dao.create(r);
+    public RestauranteController() {
+        this.dao = new RestauranteDAO();
     }
 
-    public List<Restaurante> listar() {
-        return dao.findAll();
+    public boolean cadastrar(Restaurante restaurante) {
+        return dao.cadastrar(restaurante); // <--- aqui era 'create', agora é 'cadastrar'
     }
 
-    public Restaurante buscarPorId(int id) {
-        return dao.findById(id);
-    }
-
-    public boolean atualizar(Restaurante r) {
-        return dao.update(r);
+    public boolean atualizar(Restaurante restaurante) {
+        return dao.atualizar(restaurante);
     }
 
     public boolean remover(int id) {
-        return dao.delete(id);
+        return dao.remover(id);
+    }
+
+    public Restaurante buscarPorId(int id) {
+        return dao.buscarPorId(id);
+    }
+
+    public java.util.List<Restaurante> listar() {
+        return dao.listar();
     }
 }

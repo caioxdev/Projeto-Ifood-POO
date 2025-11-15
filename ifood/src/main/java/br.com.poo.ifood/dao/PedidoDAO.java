@@ -1,8 +1,8 @@
 package br.com.poo.ifood.dao;
 
 import br.com.poo.ifood.database.Conexao;
-import br.com.poo.ifood.model.Pedido;
 import br.com.poo.ifood.model.ItemPedido;
+import br.com.poo.ifood.model.Pedido;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -10,146 +10,141 @@ import java.util.List;
 
 public class PedidoDAO {
 
-    // cadastra o pedido e seus itens em transação
-    public boolean cadastrar(Pedido p) {
-        String sqlPedido = "INSERT INTO pedido (cliente_id, restaurante_id, preco_total) VALUES (?, ?, ?)";
-        String sqlItem = "INSERT INTO itens_pedido (pedido_id, produto_id, quantidade, preco_unitario) VALUES (?, ?, ?, ?)";
+    // Cadastrar pedido principal e preencher o ID gerado
+    public boolean cadastrar(Pedido pedido) {
+        String sql = "INSERT INTO pedido (cliente_id, restaurante_id, preco_total) VALUES (?, ?, ?)";
 
-        try (Connection conn = Conexao.getConnection()) {
-            conn.setAutoCommit(false);
+        try (Connection conn = Conexao.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            // Inserir pedido
-            try (PreparedStatement stmtPedido = conn.prepareStatement(sqlPedido, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setInt(1, pedido.getCliente_id());
+            stmt.setInt(2, pedido.getRestaurante_id());
+            stmt.setDouble(3, pedido.getPreco_total());
 
-                stmtPedido.setInt(1, p.getCliente_id());
-                stmtPedido.setInt(2, p.getRestaurante_id());
-                stmtPedido.setDouble(3, p.getPreco_total());
-
-                int affected = stmtPedido.executeUpdate();
-                if (affected == 0) throw new SQLException("Falha ao inserir pedido.");
-
-                ResultSet rsKeys = stmtPedido.getGeneratedKeys();
-                if (rsKeys.next()) {
-                    p.setId_pedido(rsKeys.getInt(1));
-                } else {
-                    throw new SQLException("Falha ao obter ID do pedido.");
+            int linhas = stmt.executeUpdate();
+            if (linhas > 0) {
+                ResultSet rs = stmt.getGeneratedKeys();
+                if (rs.next()) {
+                    pedido.setId_pedido(rs.getInt(1));
                 }
+                return true;
             }
-
-            // Inserir itens do pedido
-            try (PreparedStatement stmtItem = conn.prepareStatement(sqlItem)) {
-                for (ItemPedido item : p.getItens()) {
-
-                    stmtItem.setInt(1, p.getId_pedido());
-                    stmtItem.setInt(2, item.getProduto_id());
-                    stmtItem.setInt(3, item.getQuantidade());
-                    stmtItem.setDouble(4, item.getPreco_unitario());
-
-                    stmtItem.addBatch();
-                }
-                stmtItem.executeBatch();
-            }
-
-            conn.commit();
-            return true;
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            System.out.println("ERRO ao cadastrar pedido: " + e.getMessage());
         }
+
+        return false;
     }
 
-    // listar pedidos de um cliente
-    public List<Pedido> listarPorCliente(int idCliente) {
-        List<Pedido> pedidos = new ArrayList<>();
-        String sql = "SELECT * FROM pedido WHERE cliente_id = ? ORDER BY id_pedido DESC";
+    // Cadastrar itens do pedido
+    public boolean cadastrarItens(List<ItemPedido> itens) {
+        String sql = "INSERT INTO itens_pedido (pedido_id, produto_id, quantidade, preco_unitario) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = Conexao.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setInt(1, idCliente);
+            for (ItemPedido item : itens) {
+                stmt.setInt(1, item.getPedido_id());
+                stmt.setInt(2, item.getProduto_id());
+                stmt.setInt(3, item.getQuantidade());
+                stmt.setDouble(4, item.getPreco_unitario());
+                stmt.addBatch();
+            }
+
+            stmt.executeBatch();
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println("ERRO ao cadastrar itens do pedido: " + e.getMessage());
+        }
+
+        return false;
+    }
+
+    // Listar pedidos de um cliente
+    public List<Pedido> listarPorCliente(int clienteId) {
+        List<Pedido> pedidos = new ArrayList<>();
+        String sql = "SELECT * FROM pedido WHERE cliente_id = ?";
+
+        try (Connection conn = Conexao.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, clienteId);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                Pedido p = new Pedido();
-
-                p.setId_pedido(rs.getInt("id_pedido"));
-                p.setCliente_id(rs.getInt("cliente_id"));
-                p.setRestaurante_id(rs.getInt("restaurante_id"));
-                p.setPreco_total(rs.getDouble("preco_total"));
-
-                p.setItens(buscarItensDoPedido(p.getId_pedido()));
-
-                pedidos.add(p);
+                Pedido pedido = new Pedido(
+                        rs.getInt("cliente_id"),
+                        rs.getInt("restaurante_id"),
+                        rs.getDouble("preco_total")
+                );
+                pedido.setId_pedido(rs.getInt("id_pedido"));
+                pedido.setItens(listarItens(pedido.getId_pedido()));
+                pedidos.add(pedido);
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("ERRO ao listar pedidos: " + e.getMessage());
         }
 
         return pedidos;
     }
 
-    // listar todos os pedidos (admin)
+    // Listar itens de um pedido
+    public List<ItemPedido> listarItens(int pedidoId) {
+        List<ItemPedido> itens = new ArrayList<>();
+        String sql = "SELECT * FROM itens_pedido WHERE pedido_id = ?";
+
+        try (Connection conn = Conexao.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, pedidoId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                ItemPedido item = new ItemPedido(
+                        rs.getInt("pedido_id"),
+                        rs.getInt("produto_id"),
+                        rs.getInt("quantidade"),
+                        rs.getDouble("preco_unitario")
+                );
+                item.setId_item(rs.getInt("id_item"));
+                itens.add(item);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("ERRO ao listar itens do pedido: " + e.getMessage());
+        }
+
+        return itens;
+    }
+
+    // Listar todos os pedidos (para SuperAdmin)
     public List<Pedido> listarTodos() {
         List<Pedido> pedidos = new ArrayList<>();
-        String sql = "SELECT * FROM pedido ORDER BY id_pedido DESC";
+        String sql = "SELECT * FROM pedido";
 
         try (Connection conn = Conexao.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                Pedido p = new Pedido();
-
-                p.setId_pedido(rs.getInt("id_pedido"));
-                p.setCliente_id(rs.getInt("cliente_id"));
-                p.setRestaurante_id(rs.getInt("restaurante_id"));
-                p.setPreco_total(rs.getDouble("preco_total"));
-
-                p.setItens(buscarItensDoPedido(p.getId_pedido()));
-
-                pedidos.add(p);
+                Pedido pedido = new Pedido(
+                        rs.getInt("cliente_id"),
+                        rs.getInt("restaurante_id"),
+                        rs.getDouble("preco_total")
+                );
+                pedido.setId_pedido(rs.getInt("id_pedido"));
+                pedido.setItens(listarItens(pedido.getId_pedido())); // adiciona os itens do pedido
+                pedidos.add(pedido);
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("ERRO ao listar todos os pedidos: " + e.getMessage());
         }
 
         return pedidos;
     }
 
-    // buscar itens de um pedido
-    private List<ItemPedido> buscarItensDoPedido(int idPedido) {
-        List<ItemPedido> itens = new ArrayList<>();
-
-        String sql =
-                "SELECT pi.*, pr.nome AS produto_nome " +
-                        "FROM itens_pedido pi " +
-                        "LEFT JOIN produto pr ON pr.id_produto = pi.produto_id " +
-                        "WHERE pi.pedido_id = ?";
-
-        try (Connection conn = Conexao.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, idPedido);
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                ItemPedido item = new ItemPedido();
-
-                item.setPedido_id(rs.getInt("pedido_id"));
-                item.setProduto_id(rs.getInt("produto_id"));
-                item.setQuantidade(rs.getInt("quantidade"));
-                item.setPreco_unitario(rs.getDouble("preco_unitario"));
-
-                itens.add(item);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return itens;
-    }
 }

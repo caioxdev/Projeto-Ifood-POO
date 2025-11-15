@@ -1,152 +1,177 @@
 package br.com.poo.ifood.view;
 
-import br.com.poo.ifood.controller.PedidoController;
-import br.com.poo.ifood.controller.ProdutoController;
-import br.com.poo.ifood.controller.RestauranteController;
-import br.com.poo.ifood.controller.ClienteController;
+import br.com.poo.ifood.dao.PedidoDAO;
+import br.com.poo.ifood.dao.ProdutoDAO;
+import br.com.poo.ifood.dao.RestauranteDAO;
+import br.com.poo.ifood.model.ItemPedido;
 import br.com.poo.ifood.model.Pedido;
 import br.com.poo.ifood.model.Produto;
 import br.com.poo.ifood.model.Restaurante;
-import br.com.poo.ifood.model.ItemPedido;
-import br.com.poo.ifood.model.Cliente;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class ClientePainelView {
 
-    private RestauranteController restauranteController = new RestauranteController();
-    private ProdutoController produtoController = new ProdutoController();
-    private PedidoController pedidoController = new PedidoController();
-    private ClienteController clienteController = new ClienteController();
+    private final int clienteId;
+    private final Scanner sc = new Scanner(System.in);
+    private final RestauranteDAO restauranteDAO = new RestauranteDAO();
+    private final ProdutoDAO produtoDAO = new ProdutoDAO();
+    private final PedidoDAO pedidoDAO = new PedidoDAO();
 
-    private int idCliente;
-
-    public ClientePainelView(int idCliente) {
-        this.idCliente = idCliente;
+    public ClientePainelView(int clienteId) {
+        this.clienteId = clienteId;
     }
 
-    public void menu(Scanner sc) {
-        int op;
-        do {
+    public void mostrarMenu() {
+        int opcao = -1;
+
+        while (opcao != 0) {
             System.out.println("\n--- CLIENTE ---");
             System.out.println("1. Ver Restaurantes");
             System.out.println("2. Fazer Pedido");
             System.out.println("3. Acompanhar Pedidos");
             System.out.println("0. Sair");
+            System.out.print("Opção: ");
+            opcao = sc.nextInt();
+            sc.nextLine();
 
-            op = lerInteiro(sc, "Opção: ");
-
-            switch (op) {
+            switch (opcao) {
                 case 1 -> listarRestaurantes();
-                case 2 -> fazerPedido(sc);
+                case 2 -> fazerPedido();
                 case 3 -> acompanharPedidos();
                 case 0 -> System.out.println("Saindo...");
-                default -> System.out.println("Opção inválida.");
-            }
-        } while (op != 0);
-    }
-
-    private int lerInteiro(Scanner sc, String msg) {
-        while (true) {
-            System.out.print(msg);
-            try {
-                return Integer.parseInt(sc.nextLine());
-            } catch (NumberFormatException e) {
-                System.out.println("Digite um número válido.");
+                default -> System.out.println("Opção inválida!");
             }
         }
     }
 
     private void listarRestaurantes() {
-        List<Restaurante> restaurantes = restauranteController.listar();
+        List<Restaurante> restaurantes = restauranteDAO.listar();
         if (restaurantes.isEmpty()) {
             System.out.println("Nenhum restaurante cadastrado.");
             return;
         }
+
         System.out.println("\n--- RESTAURANTES ---");
-        restaurantes.forEach(r -> System.out.println(r.getId() + " - " + r.getNome()));
+        for (Restaurante r : restaurantes) {
+            System.out.println(
+                    "ID: " + r.getId() +
+                            " | Nome: " + r.getNome() +
+                            " | Telefone: " + r.getTelefone() +
+                            " | Endereço: " + r.getEndereco()
+            );
+        }
     }
 
-    private void fazerPedido(Scanner sc) {
+    private void fazerPedido() {
         listarRestaurantes();
-        int idRestaurante = lerInteiro(sc, "Digite o ID do restaurante: ");
-        Restaurante restaurante = restauranteController.buscarPorId(idRestaurante);
-        if (restaurante == null) {
-            System.out.println("Restaurante não encontrado.");
-            return;
-        }
+        System.out.print("Digite o ID do restaurante: ");
+        int restauranteId = sc.nextInt();
+        sc.nextLine();
 
-        List<Produto> produtos = produtoController.listarPorRestaurante(idRestaurante);
+        List<Produto> produtos = produtoDAO.listarPorRestaurante(restauranteId);
         if (produtos.isEmpty()) {
-            System.out.println("Nenhum produto disponível nesse restaurante.");
+            System.out.println("Este restaurante não possui produtos cadastrados.");
             return;
         }
 
-        System.out.println("\n--- PRODUTOS ---");
-        produtos.forEach(p -> System.out.println(p.getId_produto() + " - " + p.getNome() + " (R$ " + p.getPreco() + ")"));
-
-        Pedido pedido = new Pedido();
-        pedido.setCliente_id(idCliente);
-        pedido.setRestaurante_id(idRestaurante);
-
-        double precoTotal = 0;
+        List<ItemPedido> itensPedido = new ArrayList<>();
+        double total = 0;
 
         while (true) {
-            int idProduto = lerInteiro(sc, "Digite o ID do produto (ou 0 para finalizar): ");
-            if (idProduto == 0) break;
+            System.out.println("\n--- PRODUTOS ---");
+            for (Produto p : produtos) {
+                System.out.println(
+                        "ID: " + p.getId_produto() +
+                                " | Nome: " + p.getNome() +
+                                " | Quantidade: " + p.getQuantidade() +
+                                " | Preço: R$ " + String.format("%.2f", p.getPreco())
+                );
+            }
 
-            Produto p = produtoController.buscarPorId(idProduto);
-            if (p == null || p.getRestaurante_id() != idRestaurante) {
-                System.out.println("Produto inválido para este restaurante.");
+            System.out.print("Digite o ID do produto para adicionar ao pedido (0 para finalizar): ");
+            int produtoId = sc.nextInt();
+            sc.nextLine();
+
+            if (produtoId == 0) break;
+
+            Produto produtoEscolhido = produtoDAO.buscarPorId(produtoId);
+            if (produtoEscolhido == null || produtoEscolhido.getRestaurante_id() != restauranteId) {
+                System.out.println("Produto inválido.");
                 continue;
             }
 
-            int quantidade = lerInteiro(sc, "Quantidade: ");
-            if (quantidade <= 0) {
-                System.out.println("Quantidade inválida.");
+            System.out.print("Quantidade: ");
+            int qtd = sc.nextInt();
+            sc.nextLine();
+
+            if (qtd <= 0 || qtd > produtoEscolhido.getQuantidade()) {
+                System.out.println("Quantidade inválida. Disponível: " + produtoEscolhido.getQuantidade());
                 continue;
             }
 
-            // Criar ItemPedido e adicionar no pedido
-            ItemPedido item = new ItemPedido(
-                    0,                  // id_item será gerado pelo banco
-                    p.getId_produto(),  // produto_id
-                    quantidade,         // quantidade
-                    p.getPreco()        // preço unitário
-            );
-            pedido.adicionarItem(item);
-            precoTotal += p.getPreco() * quantidade;
+            // ✅ Corrigido: cria ItemPedido com pedido_id = 0 (será gerado pelo banco)
+            ItemPedido item = new ItemPedido(0, produtoId, qtd, produtoEscolhido.getPreco());
+            itensPedido.add(item);
+            total += produtoEscolhido.getPreco() * qtd;
 
-            System.out.println(
-                    "Item adicionado: " + p.getNome() +
-                            " x" + quantidade +
-                            " | Subtotal: R$ " + String.format("%.2f", precoTotal)
-            );
+            System.out.println("Produto adicionado ao pedido!");
         }
 
-        if (pedido.getItens().isEmpty()) {
-            System.out.println("Nenhum item adicionado. Pedido cancelado.");
+        if (itensPedido.isEmpty()) {
+            System.out.println("Pedido cancelado.");
             return;
         }
 
-        pedido.setPreco_total(precoTotal);
+        // Cria o pedido
+        Pedido pedido = new Pedido(clienteId, restauranteId, total);
 
-        if (pedidoController.cadastrar(pedido)) {
-            System.out.println("Pedido realizado com sucesso! Total: R$ " + String.format("%.2f", precoTotal));
+        // Associa os itens ao pedido, preenchendo pedido_id após salvar
+        if (pedidoDAO.cadastrar(pedido)) {
+            int pedidoIdGerado = pedido.getId_pedido();
+            for (ItemPedido item : itensPedido) {
+                item.setPedido_id(pedidoIdGerado);
+            }
+            pedido.setItens(itensPedido);
+
+            if (pedidoDAO.cadastrarItens(itensPedido)) {
+                System.out.println("Pedido realizado com sucesso! Total: R$ " + String.format("%.2f", total));
+            } else {
+                System.out.println("Erro ao salvar os itens do pedido.");
+            }
+
         } else {
             System.out.println("Erro ao realizar pedido.");
         }
     }
 
     private void acompanharPedidos() {
-        List<Pedido> pedidos = pedidoController.listarPorCliente(idCliente);
+        List<Pedido> pedidos = pedidoDAO.listarPorCliente(clienteId);
         if (pedidos.isEmpty()) {
-            System.out.println("Você não possui pedidos.");
+            System.out.println("Nenhum pedido encontrado.");
             return;
         }
 
-        System.out.println("\n--- SEUS PEDIDOS ---");
-        pedidos.forEach(System.out::println);
+        System.out.println("\n--- MEUS PEDIDOS ---");
+        for (Pedido p : pedidos) {
+            System.out.println(
+                    "Pedido ID: " + p.getId_pedido() +
+                            " | Restaurante ID: " + p.getRestaurante_id() +
+                            " | Total: R$ " + String.format("%.2f", p.getPreco_total())
+            );
+            System.out.println("Itens:");
+            for (ItemPedido item : p.getItens()) {
+                Produto prod = produtoDAO.buscarPorId(item.getProduto_id());
+                String nomeProd = (prod != null) ? prod.getNome() : "Produto removido";
+                System.out.println(
+                        "Produto: " + nomeProd +
+                                " | Qtd: " + item.getQuantidade() +
+                                " | R$ " + String.format("%.2f", item.getPreco_unitario())
+                );
+            }
+            System.out.println("----------------------------");
+        }
     }
 }

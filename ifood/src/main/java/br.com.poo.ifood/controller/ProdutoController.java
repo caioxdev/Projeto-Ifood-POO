@@ -6,68 +6,41 @@ import br.com.poo.ifood.model.Produto;
 import java.util.List;
 
 public class ProdutoController {
-    private ProdutoDAO dao = new ProdutoDAO();
 
+    private final ProdutoDAO produtoDAO = new ProdutoDAO();
+
+    // Cadastrar produto
     public boolean cadastrar(Produto p) {
-        try {
-            dao.cadastrar(p);
-            return true;
-        } catch (Exception e) {
-            System.out.println("Erro ao cadastrar produto: " + e.getMessage());
-            return false;
-        }
+        return produtoDAO.cadastrar(p);
     }
 
-    /**
-     * Lista todos os produtos cadastrados
-     */
+    // Listar todos os produtos
     public List<Produto> listar() {
-        try {
-            return dao.listar(); // <-- método listar() precisa existir no ProdutoDAO
-        } catch (Exception e) {
-            System.out.println("Erro ao listar produtos: " + e.getMessage());
-            return List.of();
-        }
+        return produtoDAO.listar();
     }
 
-    /**
-     * Lista produtos de um restaurante específico
-     */
-    public List<Produto> listarPorRestaurante(int idRestaurante) {
-        try {
-            return dao.listarPorRestaurante(idRestaurante);
-        } catch (Exception e) {
-            System.out.println("Erro ao listar produtos por restaurante: " + e.getMessage());
-            return List.of();
-        }
+    // Listar produtos de um restaurante específico
+    public List<Produto> listarPorRestaurante(int restauranteId) {
+        return produtoDAO.listarPorRestaurante(restauranteId);
     }
 
-    public Produto buscarPorId(int id) {
-        try {
-            return dao.buscarPorId(id);
-        } catch (Exception e) {
-            System.out.println("Erro ao buscar produto: " + e.getMessage());
-            return null;
-        }
+    // Buscar produto pelo ID
+    public Produto buscarPorId(int idProduto) {
+        return produtoDAO.buscarPorId(idProduto);
     }
 
+    // Atualizar produto
     public boolean atualizar(Produto p) {
-        try {
-            dao.atualizar(p);
-            return true;
-        } catch (Exception e) {
-            System.out.println("Erro ao atualizar produto: " + e.getMessage());
-            return false;
-        }
+        return produtoDAO.atualizar(p);
     }
 
-    public boolean remover(int id) {
-        try {
-            dao.remover(id);
-            return true;
-        } catch (Exception e) {
-            System.out.println("Erro ao remover produto: " + e.getMessage());
-            return false;
-        }
+    // Remover produto
+    public boolean remover(int idProduto) {
+        return produtoDAO.remover(idProduto);
+    }
+
+    // Verificar se o produto está em algum pedido
+    public boolean produtoEmPedido(int idProduto) {
+        return produtoDAO.produtoEmPedido(idProduto);
     }
 }

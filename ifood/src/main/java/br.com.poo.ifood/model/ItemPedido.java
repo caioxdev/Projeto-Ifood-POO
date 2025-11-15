@@ -10,6 +10,14 @@ public class ItemPedido {
     public ItemPedido() {
     }
 
+    // Construtor usado quando o pedido_id ainda não existe
+    public ItemPedido(int produto_id, int quantidade, double preco_unitario) {
+        this.produto_id = produto_id;
+        this.quantidade = quantidade;
+        this.preco_unitario = preco_unitario;
+    }
+
+    // Construtor completo, quando já se tem o pedido_id
     public ItemPedido(int pedido_id, int produto_id, int quantidade, double preco_unitario) {
         this.pedido_id = pedido_id;
         this.produto_id = produto_id;
