@@ -8,23 +8,23 @@ import java.util.List;
 public class CategoriaController {
     private CategoriaDAO dao = new CategoriaDAO();
 
-    public void cadastrar(Categoria c) {
-        dao.create(c);
+    public boolean cadastrar(Categoria c) {
+        return dao.cadastrar(c); // aqui o dao deve retornar boolean
+    }
+
+    public boolean atualizar(Categoria c) {
+        return dao.atualizar(c); // dao deve retornar boolean
+    }
+
+    public boolean remover(int id) {
+        return dao.remover(id); // dao deve retornar boolean
     }
 
     public List<Categoria> listar() {
-        return dao.findAll();
+        return dao.listar();
     }
 
     public Categoria buscarPorId(int id) {
-        return dao.findById(id);
-    }
-
-    public void atualizar(Categoria c) {
-        dao.update(c);
-    }
-
-    public void deletar(int id) {
-        dao.delete(id);
+        return dao.buscarPorId(id);
     }
 }

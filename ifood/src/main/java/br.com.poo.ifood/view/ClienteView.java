@@ -2,6 +2,7 @@ package br.com.poo.ifood.view;
 
 import br.com.poo.ifood.controller.ClienteController;
 import br.com.poo.ifood.model.Cliente;
+
 import java.util.List;
 import java.util.Scanner;
 
@@ -12,18 +13,23 @@ public class ClienteView {
         int op;
         do {
             System.out.println("\n--- CLIENTES ---");
-            System.out.println("1 Cadastrar");
-            System.out.println("2 Listar");
-            System.out.println("3 Atualizar");
-            System.out.println("4 Deletar");
-            System.out.println("0 Voltar");
+            System.out.println("1. Cadastrar");
+            System.out.println("2. Listar");
+            System.out.println("3. Atualizar");
+            System.out.println("4. Remover");
+            System.out.println("0. Voltar");
             System.out.print("Opção: ");
-            op = Integer.parseInt(sc.nextLine());
+            String line = sc.nextLine().trim();
+            if (line.isEmpty()) line = "0";
+            op = Integer.parseInt(line);
+
             switch (op) {
                 case 1 -> cadastrar(sc);
                 case 2 -> listar();
                 case 3 -> atualizar(sc);
-                case 4 -> deletar(sc);
+                case 4 -> remover(sc);
+                case 0 -> {}
+                default -> System.out.println("Opção inválida.");
             }
         } while (op != 0);
     }
@@ -36,41 +42,72 @@ public class ClienteView {
         System.out.print("Senha: ");
         String senha = sc.nextLine();
         System.out.print("Telefone: ");
-        String tel = sc.nextLine();
-        Cliente c = new Cliente(nome, email, senha, tel);
-        controller.cadastrar(c);
-        System.out.println("OK");
+        String telefone = sc.nextLine();
+
+        Cliente c = new Cliente();
+        c.setNome(nome);
+        c.setEmail(email);
+        c.setSenha(senha);
+        c.setTelefone(telefone);
+
+        if (controller.cadastrar(c)) {
+            System.out.println("Cliente cadastrado com sucesso! ID: " + c.getId_cliente());
+        } else {
+            System.out.println("Erro ao cadastrar cliente.");
+        }
     }
 
     private void listar() {
-        List<Cliente> lista = controller.listar();
-        System.out.println("\nID | Nome | Email");
-        for (Cliente c : lista) System.out.println(c);
+        List<Cliente> clientes = controller.listar();
+        if (clientes.isEmpty()) {
+            System.out.println("Nenhum cliente cadastrado.");
+        } else {
+            System.out.println("\n--- LISTA DE CLIENTES ---");
+            clientes.forEach(System.out::println);
+        }
     }
 
     private void atualizar(Scanner sc) {
         listar();
-        System.out.print("ID: ");
+        System.out.print("ID do cliente a atualizar: ");
         int id = Integer.parseInt(sc.nextLine());
-        System.out.print("Nome: ");
+
+        Cliente c = controller.buscarPorId(id);
+        if (c == null) {
+            System.out.println("Cliente não encontrado.");
+            return;
+        }
+
+        System.out.print("Novo nome (" + c.getNome() + "): ");
         String nome = sc.nextLine();
-        System.out.print("Email: ");
+        System.out.print("Novo email (" + c.getEmail() + "): ");
         String email = sc.nextLine();
-        System.out.print("Senha: ");
+        System.out.print("Nova senha: ");
         String senha = sc.nextLine();
-        System.out.print("Telefone: ");
-        String tel = sc.nextLine();
-        Cliente c = new Cliente(nome, email, senha, tel);
-        c.setId(id);
-        controller.atualizar(c);
-        System.out.println("Atualizado");
+        System.out.print("Novo telefone (" + c.getTelefone() + "): ");
+        String telefone = sc.nextLine();
+
+        if (!nome.isEmpty()) c.setNome(nome);
+        if (!email.isEmpty()) c.setEmail(email);
+        if (!senha.isEmpty()) c.setSenha(senha);
+        if (!telefone.isEmpty()) c.setTelefone(telefone);
+
+        if (controller.atualizar(c)) {
+            System.out.println("Cliente atualizado com sucesso!");
+        } else {
+            System.out.println("Erro ao atualizar cliente.");
+        }
     }
 
-    private void deletar(Scanner sc) {
+    private void remover(Scanner sc) {
         listar();
-        System.out.print("ID: ");
+        System.out.print("ID do cliente a remover: ");
         int id = Integer.parseInt(sc.nextLine());
-        controller.deletar(id);
-        System.out.println("Deletado");
+
+        if (controller.remover(id)) {
+            System.out.println("Cliente removido com sucesso!");
+        } else {
+            System.out.println("Erro ao remover cliente.");
+        }
     }
 }

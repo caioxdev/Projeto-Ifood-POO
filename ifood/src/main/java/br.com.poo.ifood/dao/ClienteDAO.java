@@ -2,95 +2,116 @@ package br.com.poo.ifood.dao;
 
 import br.com.poo.ifood.database.Conexao;
 import br.com.poo.ifood.model.Cliente;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ClienteDAO {
 
-    public void create(Cliente c) {
+    public boolean create(Cliente c) {
         String sql = "INSERT INTO cliente (nome, email, senha, telefone) VALUES (?, ?, ?, ?)";
         try (Connection conn = Conexao.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, c.getNome());
-            ps.setString(2, c.getEmail());
-            ps.setString(3, c.getSenha());
-            ps.setString(4, c.getTelefone());
-            ps.executeUpdate();
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) c.setId(rs.getInt(1));
-            }
-        } catch (SQLException e) {
-            System.out.println("ClienteDAO.create: " + e.getMessage());
-        }
-    }
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-    public Cliente findById(int id) {
-        String sql = "SELECT * FROM cliente WHERE id_cliente = ?";
-        try (Connection conn = Conexao.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    Cliente c = new Cliente();
-                    c.setId(rs.getInt("id_cliente"));
-                    c.setNome(rs.getString("nome"));
-                    c.setEmail(rs.getString("email"));
-                    c.setSenha(rs.getString("senha"));
-                    c.setTelefone(rs.getString("telefone"));
-                    return c;
-                }
+            stmt.setString(1, c.getNome());
+            stmt.setString(2, c.getEmail());
+            stmt.setString(3, c.getSenha());
+            stmt.setString(4, c.getTelefone());
+
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows == 0) return false;
+
+            ResultSet generatedKeys = stmt.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                c.setId_cliente(generatedKeys.getInt(1));
             }
+            return true;
+
         } catch (SQLException e) {
-            System.out.println("ClienteDAO.findById: " + e.getMessage());
+            System.out.println("Erro ao cadastrar cliente: " + e.getMessage());
+            return false;
         }
-        return null;
     }
 
     public List<Cliente> findAll() {
         List<Cliente> lista = new ArrayList<>();
         String sql = "SELECT * FROM cliente";
+
         try (Connection conn = Conexao.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
             while (rs.next()) {
                 Cliente c = new Cliente();
-                c.setId(rs.getInt("id_cliente"));
+                c.setId_cliente(rs.getInt("id_cliente"));
                 c.setNome(rs.getString("nome"));
                 c.setEmail(rs.getString("email"));
                 c.setSenha(rs.getString("senha"));
                 c.setTelefone(rs.getString("telefone"));
                 lista.add(c);
             }
+
         } catch (SQLException e) {
-            System.out.println("ClienteDAO.findAll: " + e.getMessage());
+            System.out.println("Erro ao listar clientes: " + e.getMessage());
         }
+
         return lista;
     }
 
-    public void update(Cliente c) {
-        String sql = "UPDATE cliente SET nome=?, email=?, senha=?, telefone=? WHERE id_cliente = ?";
+    public Cliente findById(int id) {
+        String sql = "SELECT * FROM cliente WHERE id_cliente=?";
         try (Connection conn = Conexao.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, c.getNome());
-            ps.setString(2, c.getEmail());
-            ps.setString(3, c.getSenha());
-            ps.setString(4, c.getTelefone());
-            ps.setInt(5, c.getId());
-            ps.executeUpdate();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                Cliente c = new Cliente();
+                c.setId_cliente(rs.getInt("id_cliente"));
+                c.setNome(rs.getString("nome"));
+                c.setEmail(rs.getString("email"));
+                c.setSenha(rs.getString("senha"));
+                c.setTelefone(rs.getString("telefone"));
+                return c;
+            }
+
         } catch (SQLException e) {
-            System.out.println("ClienteDAO.update: " + e.getMessage());
+            System.out.println("Erro ao buscar cliente: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public boolean update(Cliente c) {
+        String sql = "UPDATE cliente SET nome=?, email=?, senha=?, telefone=? WHERE id_cliente=?";
+        try (Connection conn = Conexao.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, c.getNome());
+            stmt.setString(2, c.getEmail());
+            stmt.setString(3, c.getSenha());
+            stmt.setString(4, c.getTelefone());
+            stmt.setInt(5, c.getId_cliente());
+
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar cliente: " + e.getMessage());
+            return false;
         }
     }
 
-    public void delete(int id) {
-        String sql = "DELETE FROM cliente WHERE id_cliente = ?";
+    public boolean delete(int id) {
+        String sql = "DELETE FROM cliente WHERE id_cliente=?";
         try (Connection conn = Conexao.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            ps.executeUpdate();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            return stmt.executeUpdate() > 0;
+
         } catch (SQLException e) {
-            System.out.println("ClienteDAO.delete: " + e.getMessage());
+            System.out.println("Erro ao deletar cliente: " + e.getMessage());
+            return false;
         }
     }
 }

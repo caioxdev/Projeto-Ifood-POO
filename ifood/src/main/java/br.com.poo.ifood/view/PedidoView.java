@@ -1,80 +1,161 @@
 package br.com.poo.ifood.view;
 
 import br.com.poo.ifood.controller.PedidoController;
+import br.com.poo.ifood.controller.ProdutoController;
+import br.com.poo.ifood.controller.RestauranteController;
 import br.com.poo.ifood.model.Pedido;
+import br.com.poo.ifood.model.Produto;
+import br.com.poo.ifood.model.Restaurante;
+import br.com.poo.ifood.model.ItemPedido;
+
 import java.util.List;
 import java.util.Scanner;
 
 public class PedidoView {
-    private PedidoController controller = new PedidoController();
+    private RestauranteController restauranteController = new RestauranteController();
+    private ProdutoController produtoController = new ProdutoController();
+    private PedidoController pedidoController = new PedidoController();
+
+    private int idCliente = -1; // -1 indica admin
+
+    // Construtor para cliente
+    public PedidoView(int idCliente) {
+        this.idCliente = idCliente;
+    }
+
+    // Construtor vazio para admin
+    public PedidoView() {
+        this.idCliente = -1;
+    }
 
     public void menu(Scanner sc) {
         int op;
         do {
             System.out.println("\n--- PEDIDOS ---");
-            System.out.println("1 Cadastrar");
-            System.out.println("2 Listar");
-            System.out.println("3 Atualizar");
-            System.out.println("4 Deletar");
-            System.out.println("0 Voltar");
+            if (idCliente == -1) {
+                System.out.println("1. Ver todos os pedidos");
+            } else {
+                System.out.println("1. Fazer pedido");
+                System.out.println("2. Acompanhar meus pedidos");
+            }
+            System.out.println("0. Voltar");
             System.out.print("Opção: ");
-            op = Integer.parseInt(sc.nextLine());
+            String line = sc.nextLine().trim();
+            if (line.isEmpty()) line = "0";
+            op = Integer.parseInt(line);
+
             switch (op) {
-                case 1 -> cadastrar(sc);
-                case 2 -> listar();
-                case 3 -> atualizar(sc);
-                case 4 -> deletar(sc);
+                case 1 -> {
+                    if (idCliente == -1) {
+                        acompanharTodosPedidos();
+                    } else {
+                        fazerPedido(sc);
+                    }
+                }
+                case 2 -> {
+                    if (idCliente != -1) {
+                        acompanharPedidos();
+                    } else {
+                        System.out.println("Opção inválida.");
+                    }
+                }
+                case 0 -> {
+                }
+                default -> System.out.println("Opção inválida.");
             }
         } while (op != 0);
     }
 
-    public void cadastrar(Scanner sc) {
-        System.out.print("ID Cliente: ");
-        int cli = Integer.parseInt(sc.nextLine());
-        System.out.print("ID Restaurante: ");
-        int res = Integer.parseInt(sc.nextLine());
-        System.out.print("ID Produto: ");
-        int prod = Integer.parseInt(sc.nextLine());
-        System.out.print("Quantidade: ");
-        int qtd = Integer.parseInt(sc.nextLine());
-        System.out.print("Preço total: ");
-        double preco = Double.parseDouble(sc.nextLine());
-        Pedido p = new Pedido(cli, res, prod, qtd, preco);
-        controller.cadastrar(p);
-        System.out.println("OK");
+    private void fazerPedido(Scanner sc) {
+        listarRestaurantes();
+        System.out.print("Digite o ID do restaurante: ");
+        int idRestaurante = Integer.parseInt(sc.nextLine());
+
+        List<Produto> produtos = produtoController.listarPorRestaurante(idRestaurante);
+        if (produtos.isEmpty()) {
+            System.out.println("Nenhum produto disponível nesse restaurante.");
+            return;
+        }
+
+        System.out.println("\n--- PRODUTOS ---");
+        produtos.forEach(System.out::println);
+
+        double precoTotal = 0;
+        Pedido pedido = new Pedido();
+        pedido.setCliente_id(idCliente);
+        pedido.setRestaurante_id(idRestaurante);
+
+        while (true) {
+            System.out.print("Digite o ID do produto (ou 0 para finalizar): ");
+            int idProduto = Integer.parseInt(sc.nextLine());
+            if (idProduto == 0) break;
+
+            Produto p = produtoController.buscarPorId(idProduto);
+            if (p == null) {
+                System.out.println("Produto não encontrado.");
+                continue;
+            }
+
+            System.out.print("Quantidade: ");
+            int q = Integer.parseInt(sc.nextLine());
+
+            // CRIAR OBJETO ItemPedido
+            ItemPedido item = new ItemPedido(
+                    0,               // id_item, será gerado pelo banco
+                    p.getId_produto(), // produto_id
+                    q,                // quantidade
+                    p.getPreco()      // preço unitário
+            );
+            pedido.adicionarItem(item);
+            precoTotal += p.getPreco() * q;
+
+            System.out.println("Item adicionado: " + p.getNome() + " x" + q +
+                    " | Subtotal: R$ " + String.format("%.2f", precoTotal));
+        }
+
+        if (pedido.getItens().isEmpty()) {
+            System.out.println("Nenhum item adicionado. Pedido cancelado.");
+            return;
+        }
+
+        pedido.setPreco_total(precoTotal);
+        if (pedidoController.cadastrar(pedido)) {
+            System.out.println("Pedido realizado com sucesso! Total: R$ " + String.format("%.2f", precoTotal));
+        } else {
+            System.out.println("Erro ao realizar pedido.");
+        }
     }
 
-    public void listar() {
-        List<Pedido> lista = controller.listar();
-        System.out.println("\nID | Cliente | Restaurante | Produto | Qtd | Preço");
-        for (Pedido p : lista) System.out.println(p);
+
+    // CLIENTE: acompanhar pedidos próprios
+    private void acompanharPedidos() {
+        List<Pedido> pedidos = pedidoController.listarPorCliente(idCliente);
+        if (pedidos.isEmpty()) {
+            System.out.println("Você não possui pedidos.");
+        } else {
+            System.out.println("\n--- SEUS PEDIDOS ---");
+            pedidos.forEach(System.out::println);
+        }
     }
 
-    private void atualizar(Scanner sc) {
-        listar();
-        System.out.print("ID: ");
-        int id = Integer.parseInt(sc.nextLine());
-        System.out.print("ID Cliente: ");
-        int cli = Integer.parseInt(sc.nextLine());
-        System.out.print("ID Restaurante: ");
-        int res = Integer.parseInt(sc.nextLine());
-        System.out.print("ID Produto: ");
-        int prod = Integer.parseInt(sc.nextLine());
-        System.out.print("Quantidade: ");
-        int qtd = Integer.parseInt(sc.nextLine());
-        System.out.print("Preço total: ");
-        double preco = Double.parseDouble(sc.nextLine());
-        Pedido p = new Pedido(cli, res, prod, qtd, preco);
-        p.setId(id);
-        controller.atualizar(p);
-        System.out.println("Atualizado");
+    // ADMIN: acompanhar todos pedidos
+    private void acompanharTodosPedidos() {
+        List<Pedido> pedidos = pedidoController.listarTodos();
+        if (pedidos.isEmpty()) {
+            System.out.println("Nenhum pedido registrado.");
+        } else {
+            System.out.println("\n--- TODOS OS PEDIDOS ---");
+            pedidos.forEach(System.out::println);
+        }
     }
 
-    private void deletar(Scanner sc) {
-        listar();
-        System.out.print("ID: ");
-        int id = Integer.parseInt(sc.nextLine());
-        controller.deletar(id);
-        System.out.println("Deletado");
+    private void listarRestaurantes() {
+        List<Restaurante> restaurantes = restauranteController.listar();
+        if (restaurantes.isEmpty()) {
+            System.out.println("Nenhum restaurante cadastrado.");
+        } else {
+            System.out.println("\n--- RESTAURANTES ---");
+            restaurantes.forEach(System.out::println);
+        }
     }
 }

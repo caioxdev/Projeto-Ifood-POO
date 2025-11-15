@@ -13,27 +13,25 @@ public class RestauranteView {
         int op;
         do {
             System.out.println("\n--- RESTAURANTES ---");
-            System.out.println("1 Cadastrar");
-            System.out.println("2 Listar");
-            System.out.println("3 Atualizar");
-            System.out.println("4 Deletar");
-            System.out.println("0 Voltar");
+            System.out.println("1. Cadastrar");
+            System.out.println("2. Listar");
+            System.out.println("3. Atualizar");
+            System.out.println("4. Remover");
+            System.out.println("0. Voltar");
             System.out.print("Opção: ");
-            op = Integer.parseInt(sc.nextLine());
+            String line = sc.nextLine().trim();
+            if (line.isEmpty()) line = "0";
+            op = Integer.parseInt(line);
 
             switch (op) {
                 case 1 -> cadastrar(sc);
                 case 2 -> listar();
                 case 3 -> atualizar(sc);
-                case 4 -> deletar(sc);
+                case 4 -> remover(sc);
+                case 0 -> {}
+                default -> System.out.println("Opção inválida.");
             }
         } while (op != 0);
-    }
-
-    public void listar() {
-        List<Restaurante> lista = controller.findAll();
-        System.out.println("\nID | Nome | Categoria");
-        for (Restaurante r : lista) System.out.println(r);
     }
 
     private void cadastrar(Scanner sc) {
@@ -43,28 +41,81 @@ public class RestauranteView {
         String tel = sc.nextLine();
         System.out.print("Endereço: ");
         String end = sc.nextLine();
-        System.out.print("Categoria ID: ");
-        int cat = Integer.parseInt(sc.nextLine());
-        System.out.print("Avaliação (0-5): ");
-        double av = Double.parseDouble(sc.nextLine());
+        System.out.print("ID Categoria: ");
+        int catId = Integer.parseInt(sc.nextLine());
+        System.out.print("Avaliação: ");
+        double aval = Double.parseDouble(sc.nextLine());
 
-        Restaurante r = new Restaurante(nome, tel, end, cat, av);
-        controller.create(r);
-        System.out.println("OK");
+        Restaurante r = new Restaurante(nome, tel, end, catId, aval);
+        if (controller.cadastrar(r)) {
+            System.out.println("Restaurante cadastrado!");
+        } else {
+            System.out.println("Erro ao cadastrar restaurante.");
+        }
+    }
+
+    private void listar() {
+        List<Restaurante> restaurantes = controller.listar();
+        if (restaurantes.isEmpty()) {
+            System.out.println("Nenhum restaurante encontrado.");
+        } else {
+            System.out.println("\n--- LISTA DE RESTAURANTES ---");
+            for (Restaurante r : restaurantes) {
+                System.out.println(
+                        "ID: " + r.getId() +
+                                " | Nome: " + r.getNome() +
+                                " | Endereço: " + r.getEndereco() +
+                                " | Telefone: " + r.getTelefone() +
+                                " | Categoria: " + r.getCategoria_id() +
+                                " | Avaliação: " + r.getAvaliacao() +
+                                " | Ativo: " + r.isAtivo()
+                );
+            }
+        }
     }
 
     private void atualizar(Scanner sc) {
         listar();
-        System.out.print("ID: ");
+        System.out.print("ID do restaurante a atualizar: ");
         int id = Integer.parseInt(sc.nextLine());
-        controller.atualizarViaTerminal(sc, id);
+        Restaurante r = controller.buscarPorId(id);
+        if (r == null) {
+            System.out.println("Restaurante não encontrado.");
+            return;
+        }
+
+        System.out.print("Novo nome (" + r.getNome() + "): ");
+        String nome = sc.nextLine();
+        System.out.print("Novo telefone (" + r.getTelefone() + "): ");
+        String tel = sc.nextLine();
+        System.out.print("Novo endereço (" + r.getEndereco() + "): ");
+        String end = sc.nextLine();
+        System.out.print("Nova categoria (" + r.getCategoria_id() + "): ");
+        String catStr = sc.nextLine();
+        System.out.print("Nova avaliação (" + r.getAvaliacao() + "): ");
+        String avalStr = sc.nextLine();
+
+        r.setNome(nome.isEmpty() ? r.getNome() : nome);
+        r.setTelefone(tel.isEmpty() ? r.getTelefone() : tel);
+        r.setEndereco(end.isEmpty() ? r.getEndereco() : end);
+        r.setCategoria_id(catStr.isEmpty() ? r.getCategoria_id() : Integer.parseInt(catStr));
+        r.setAvaliacao(avalStr.isEmpty() ? r.getAvaliacao() : Double.parseDouble(avalStr));
+
+        if (controller.atualizar(r)) {
+            System.out.println("Restaurante atualizado!");
+        } else {
+            System.out.println("Erro ao atualizar restaurante.");
+        }
     }
 
-    private void deletar(Scanner sc) {
+    private void remover(Scanner sc) {
         listar();
-        System.out.print("ID: ");
+        System.out.print("ID do restaurante a remover: ");
         int id = Integer.parseInt(sc.nextLine());
-        controller.delete(id);
-        System.out.println("Deletado");
+        if (controller.remover(id)) {
+            System.out.println("Restaurante removido!");
+        } else {
+            System.out.println("Erro ao remover restaurante.");
+        }
     }
 }

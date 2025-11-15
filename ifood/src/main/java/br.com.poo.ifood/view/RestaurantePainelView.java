@@ -1,79 +1,108 @@
 package br.com.poo.ifood.view;
 
-import br.com.poo.ifood.controller.RestauranteController;
-import br.com.poo.ifood.model.Restaurante;
+import br.com.poo.ifood.controller.ProdutoController;
+import br.com.poo.ifood.model.Produto;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class RestaurantePainelView {
+    private ProdutoController produtoController = new ProdutoController();
+    private int idRestaurante;
 
-    private RestauranteController controller = new RestauranteController();
+    public RestaurantePainelView(int idRestaurante) {
+        this.idRestaurante = idRestaurante;
+    }
 
     public void menu(Scanner sc) {
-        int opcao;
+        int op;
         do {
-            System.out.println("\n--- PAINEL DO RESTAURANTE ---");
-            System.out.println("1 Cadastrar");
-            System.out.println("2 Listar");
-            System.out.println("3 Atualizar");
-            System.out.println("4 Remover");
-            System.out.println("0 Voltar");
+            System.out.println("\n--- RESTAURANTE ---");
+            System.out.println("1. Cadastrar Produto");
+            System.out.println("2. Listar Produtos");
+            System.out.println("3. Atualizar Produto");
+            System.out.println("4. Remover Produto");
+            System.out.println("0. Voltar");
             System.out.print("Opção: ");
-            opcao = Integer.parseInt(sc.nextLine());
+            op = Integer.parseInt(sc.nextLine().trim());
 
-            switch (opcao) {
-                case 1 -> cadastrar(sc);
-                case 2 -> listar();
-                case 3 -> atualizar(sc);
-                case 4 -> remover(sc);
+            switch (op) {
+                case 1 -> cadastrarProduto(sc);
+                case 2 -> listarProdutos();
+                case 3 -> atualizarProduto(sc);
+                case 4 -> removerProduto(sc);
+                case 0 -> {}
+                default -> System.out.println("Opção inválida.");
             }
-        } while (opcao != 0);
+        } while (op != 0);
     }
 
-    private void cadastrar(Scanner sc) {
-        Restaurante r = new Restaurante();
-
+    private void cadastrarProduto(Scanner sc) {
         System.out.print("Nome: ");
-        r.setNome(sc.nextLine());
+        String nome = sc.nextLine();
+        System.out.print("Descrição: ");
+        String desc = sc.nextLine();
+        System.out.print("Quantidade: ");
+        int q = Integer.parseInt(sc.nextLine());
+        System.out.print("Preço: ");
+        double preco = Double.parseDouble(sc.nextLine());
 
-        System.out.print("Telefone: ");
-        r.setTelefone(sc.nextLine());
-
-        System.out.print("Endereço: ");
-        r.setEndereco(sc.nextLine());
-
-        System.out.print("Categoria ID: ");
-        r.setCategoriaId(Integer.parseInt(sc.nextLine()));
-
-        System.out.print("Avaliação (0-5): ");
-        r.setAvaliacao(Double.parseDouble(sc.nextLine()));
-
-        boolean ok = controller.create(r);
-        System.out.println(ok ? "Cadastrado!" : "Erro ao cadastrar.");
+        Produto p = new Produto(idRestaurante, nome, desc, q, preco);
+        if (produtoController.cadastrar(p)) {
+            System.out.println("Produto cadastrado!");
+        } else {
+            System.out.println("Erro ao cadastrar produto.");
+        }
     }
 
-    private void listar() {
-        var lista = controller.findAll();
-        if (lista.isEmpty()) {
-            System.out.println("Nenhum restaurante cadastrado.");
+    private void listarProdutos() {
+        List<Produto> produtos = produtoController.listarPorRestaurante(idRestaurante);
+        if (produtos.isEmpty()) {
+            System.out.println("Nenhum produto cadastrado.");
+        } else {
+            produtos.forEach(System.out::println);
+        }
+    }
+
+    private void atualizarProduto(Scanner sc) {
+        listarProdutos();
+        System.out.print("ID do produto: ");
+        int id = Integer.parseInt(sc.nextLine());
+        Produto p = produtoController.buscarPorId(id);
+        if (p == null) {
+            System.out.println("Produto não encontrado.");
             return;
         }
 
-        for (Restaurante r : lista) {
-            System.out.println(r);
+        System.out.print("Novo nome (" + p.getNome() + "): ");
+        String nome = sc.nextLine();
+        System.out.print("Nova descrição (" + p.getDescricao() + "): ");
+        String desc = sc.nextLine();
+        System.out.print("Nova quantidade (" + p.getQuantidade() + "): ");
+        String qStr = sc.nextLine();
+        System.out.print("Novo preço (" + p.getPreco() + "): ");
+        String precoStr = sc.nextLine();
+
+        p.setNome(nome.isEmpty() ? p.getNome() : nome);
+        p.setDescricao(desc.isEmpty() ? p.getDescricao() : desc);
+        p.setQuantidade(qStr.isEmpty() ? p.getQuantidade() : Integer.parseInt(qStr));
+        p.setPreco(precoStr.isEmpty() ? p.getPreco() : Double.parseDouble(precoStr));
+
+        if (produtoController.atualizar(p)) {
+            System.out.println("Produto atualizado!");
+        } else {
+            System.out.println("Erro ao atualizar produto.");
         }
     }
 
-    private void atualizar(Scanner sc) {
-        System.out.print("ID para atualizar: ");
+    private void removerProduto(Scanner sc) {
+        listarProdutos();
+        System.out.print("ID do produto: ");
         int id = Integer.parseInt(sc.nextLine());
-        controller.atualizarViaTerminal(sc, id);
-    }
-
-    private void remover(Scanner sc) {
-        System.out.print("ID para remover: ");
-        int id = Integer.parseInt(sc.nextLine());
-        boolean ok = controller.delete(id);
-        System.out.println(ok ? "Removido." : "Erro ao remover.");
+        if (produtoController.remover(id)) {
+            System.out.println("Produto removido!");
+        } else {
+            System.out.println("Erro ao remover produto.");
+        }
     }
 }

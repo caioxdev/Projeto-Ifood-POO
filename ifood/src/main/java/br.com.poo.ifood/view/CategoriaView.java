@@ -2,6 +2,7 @@ package br.com.poo.ifood.view;
 
 import br.com.poo.ifood.controller.CategoriaController;
 import br.com.poo.ifood.model.Categoria;
+
 import java.util.List;
 import java.util.Scanner;
 
@@ -12,18 +13,23 @@ public class CategoriaView {
         int op;
         do {
             System.out.println("\n--- CATEGORIAS ---");
-            System.out.println("1 Cadastrar");
-            System.out.println("2 Listar");
-            System.out.println("3 Atualizar");
-            System.out.println("4 Deletar");
-            System.out.println("0 Voltar");
+            System.out.println("1. Cadastrar");
+            System.out.println("2. Listar");
+            System.out.println("3. Atualizar");
+            System.out.println("4. Remover");
+            System.out.println("0. Voltar");
             System.out.print("Opção: ");
-            op = Integer.parseInt(sc.nextLine());
+            String line = sc.nextLine().trim();
+            if (line.isEmpty()) line = "0";
+            op = Integer.parseInt(line);
+
             switch (op) {
                 case 1 -> cadastrar(sc);
                 case 2 -> listar();
                 case 3 -> atualizar(sc);
-                case 4 -> deletar(sc);
+                case 4 -> remover(sc);
+                case 0 -> {}
+                default -> System.out.println("Opção inválida.");
             }
         } while (op != 0);
     }
@@ -33,36 +39,61 @@ public class CategoriaView {
         String nome = sc.nextLine();
         System.out.print("Descrição: ");
         String desc = sc.nextLine();
-        Categoria c = new Categoria(nome, desc);
-        controller.cadastrar(c);
-        System.out.println("OK");
+
+        Categoria c = new Categoria();
+        c.setNome(nome);
+        c.setDescricao(desc);
+
+        if (controller.cadastrar(c)) {
+            System.out.println("Categoria cadastrada com sucesso!");
+        } else {
+            System.out.println("Erro ao cadastrar categoria.");
+        }
     }
 
     private void listar() {
-        List<Categoria> lista = controller.listar();
-        System.out.println("\nID | Nome - Descrição");
-        for (Categoria c : lista) System.out.println(c);
+        List<Categoria> categorias = controller.listar();
+        if (categorias.isEmpty()) {
+            System.out.println("Nenhuma categoria cadastrada.");
+        } else {
+            categorias.forEach(System.out::println);
+        }
     }
 
     private void atualizar(Scanner sc) {
         listar();
-        System.out.print("ID: ");
+        System.out.print("ID da categoria a atualizar: ");
         int id = Integer.parseInt(sc.nextLine());
-        System.out.print("Novo nome: ");
+        Categoria c = controller.buscarPorId(id);
+        if (c == null) {
+            System.out.println("Categoria não encontrada.");
+            return;
+        }
+
+        System.out.print("Novo nome (" + c.getNome() + "): ");
         String nome = sc.nextLine();
-        System.out.print("Nova descrição: ");
+        System.out.print("Nova descrição (" + c.getDescricao() + "): ");
         String desc = sc.nextLine();
-        Categoria c = new Categoria(nome, desc);
-        c.setId(id);
-        controller.atualizar(c);
-        System.out.println("Atualizado");
+
+        c.setNome(nome.isEmpty() ? c.getNome() : nome);
+        c.setDescricao(desc.isEmpty() ? c.getDescricao() : desc);
+
+        if (controller.atualizar(c)) {
+            System.out.println("Categoria atualizada com sucesso!");
+        } else {
+            System.out.println("Erro ao atualizar categoria.");
+        }
     }
 
-    private void deletar(Scanner sc) {
+    private void remover(Scanner sc) {
         listar();
-        System.out.print("ID: ");
+        System.out.print("ID da categoria a remover: ");
         int id = Integer.parseInt(sc.nextLine());
-        controller.deletar(id);
-        System.out.println("Deletado");
+
+        if (controller.remover(id)) {
+            System.out.println("Categoria removida com sucesso!");
+        } else {
+            System.out.println("Erro ao remover categoria.");
+        }
     }
 }

@@ -1,30 +1,36 @@
 package br.com.poo.ifood.model;
 
 public class Restaurante {
-    private int id;
+    private static int contador = 1;
+    private int id_restaurante;
     private String nome;
     private String telefone;
     private String endereco;
-    private int categoriaId;
+    private int categoria_id;
     private double avaliacao;
+    private boolean ativo;
 
     public Restaurante() {
+        this.id_restaurante = contador++;
+        this.ativo = true;
     }
 
-    public Restaurante(String nome, String telefone, String endereco, int categoriaId, double avaliacao) {
+    public Restaurante(String nome, String telefone, String endereco, int categoria_id, double avaliacao) {
+        this.id_restaurante = contador++;
         this.nome = nome;
         this.telefone = telefone;
         this.endereco = endereco;
-        this.categoriaId = categoriaId;
+        this.categoria_id = categoria_id;
         this.avaliacao = avaliacao;
+        this.ativo = true;
     }
 
     public int getId() {
-        return id;
+        return id_restaurante;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.id_restaurante = id;
     }
 
     public String getNome() {
@@ -51,12 +57,12 @@ public class Restaurante {
         this.endereco = endereco;
     }
 
-    public int getCategoriaId() {
-        return categoriaId;
+    public int getCategoria_id() {
+        return categoria_id;
     }
 
-    public void setCategoriaId(int categoriaId) {
-        this.categoriaId = categoriaId;
+    public void setCategoria_id(int categoria_id) {
+        this.categoria_id = categoria_id;
     }
 
     public double getAvaliacao() {
@@ -67,8 +73,17 @@ public class Restaurante {
         this.avaliacao = avaliacao;
     }
 
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
     @Override
     public String toString() {
-        return id + " | " + nome + " | " + telefone + " | " + endereco + " | Cat: " + categoriaId + " | Aval: " + avaliacao;
+        return id_restaurante + " | " + nome + " | " + telefone + " | " + endereco +
+                " | Categoria: " + categoria_id + " | Avaliação: " + avaliacao + " | Ativo: " + ativo;
     }
 }

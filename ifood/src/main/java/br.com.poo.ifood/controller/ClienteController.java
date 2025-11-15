@@ -8,8 +8,8 @@ import java.util.List;
 public class ClienteController {
     private ClienteDAO dao = new ClienteDAO();
 
-    public void cadastrar(Cliente c) {
-        dao.create(c);
+    public boolean cadastrar(Cliente c) {
+        return dao.create(c);
     }
 
     public List<Cliente> listar() {
@@ -20,11 +20,11 @@ public class ClienteController {
         return dao.findById(id);
     }
 
-    public void atualizar(Cliente c) {
-        dao.update(c);
+    public boolean atualizar(Cliente c) {
+        return dao.update(c);
     }
 
-    public void deletar(int id) {
-        dao.delete(id);
+    public boolean remover(int id) {
+        return dao.delete(id);
     }
 }

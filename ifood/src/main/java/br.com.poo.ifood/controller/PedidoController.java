@@ -8,23 +8,16 @@ import java.util.List;
 public class PedidoController {
     private PedidoDAO dao = new PedidoDAO();
 
-    public void cadastrar(Pedido p) {
-        dao.create(p);
+    public boolean cadastrar(Pedido p) {
+        return dao.cadastrar(p);
     }
 
-    public List<Pedido> listar() {
-        return dao.findAll();
+    public List<Pedido> listarPorCliente(int idCliente) {
+        return dao.listarPorCliente(idCliente);
     }
 
-    public Pedido buscarPorId(int id) {
-        return dao.findById(id);
-    }
-
-    public void atualizar(Pedido p) {
-        dao.update(p);
-    }
-
-    public void deletar(int id) {
-        dao.delete(id);
+    // MÉTODO NOVO: listar todos pedidos (para admin)
+    public List<Pedido> listarTodos() {
+        return dao.listarTodos();
     }
 }
