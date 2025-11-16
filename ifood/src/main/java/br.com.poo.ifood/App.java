@@ -9,29 +9,40 @@ import java.util.Scanner;
 public class App {
 
     public static void main(String[] args) {
-
         Scanner sc = new Scanner(System.in);
 
-        ClienteView clienteView = new ClienteView(sc);
-        RestauranteView restauranteView = new RestauranteView(sc);
-        SuperAdminView superAdminView = new SuperAdminView(sc);
+        // Cores ANSI para o menu principal
+        final String RESET = "\u001B[0m";
+        final String AZUL = "\u001B[34m";
+        final String AMARELO = "\u001B[33m";
+        final String VERMELHO = "\u001B[31m";
 
         int op;
         do {
-            System.out.println("\n====== IFOOD ======");
-            System.out.println("1. Área do Cliente");
-            System.out.println("2. Área do Restaurante");
-            System.out.println("3. Área do SuperAdmin");
+            System.out.println(AZUL + "\n=== iFOOD POO ===" + RESET);
+            System.out.println("1. Cliente");
+            System.out.println("2. Restaurante");
+            System.out.println("3. SuperAdmin");
             System.out.println("0. Sair");
-            System.out.print("Opção: ");
+            System.out.print(AMARELO + "Opção: " + RESET);
+
             op = Integer.parseInt(sc.nextLine());
 
             switch (op) {
-                case 1 -> clienteView.menu();
-                case 2 -> restauranteView.menu();
-                case 3 -> superAdminView.menu();
-                case 0 -> System.out.println("Saindo do sistema...");
-                default -> System.out.println("Opção inválida!");
+                case 1 -> {
+                    ClienteView clienteView = new ClienteView(sc);
+                    clienteView.menu();
+                }
+                case 2 -> {
+                    RestauranteView restauranteView = new RestauranteView(sc);
+                    restauranteView.menu();
+                }
+                case 3 -> {
+                    SuperAdminView superAdminView = new SuperAdminView(sc);
+                    superAdminView.menu();
+                }
+                case 0 -> System.out.println(VERMELHO + "Saindo do sistema..." + RESET);
+                default -> System.out.println(VERMELHO + "Opção inválida!" + RESET);
             }
 
         } while (op != 0);

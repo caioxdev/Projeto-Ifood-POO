@@ -1,7 +1,9 @@
 package br.com.poo.ifood.view;
 
+import br.com.poo.ifood.controller.PedidoController;
 import br.com.poo.ifood.controller.ProdutoController;
 import br.com.poo.ifood.controller.RestauranteController;
+import br.com.poo.ifood.model.Cliente;
 import br.com.poo.ifood.model.Restaurante;
 import br.com.poo.ifood.model.Produto;
 
@@ -17,8 +19,8 @@ public class PedidoView {
         this.sc = sc;
     }
 
-    public void fazerPedido() {
-        // Listar restaurantes
+    public void fazerPedido(Cliente cliente, PedidoController pedidoController) {
+
         List<Restaurante> restaurantes = restauranteController.listar();
         if (restaurantes.isEmpty()) {
             System.out.println("Nenhum restaurante disponível.");
@@ -39,31 +41,12 @@ public class PedidoView {
             return;
         }
 
-        // Listar produtos do restaurante
-        List<Produto> produtos = produtoController.listarPorRestaurante(r.getId_restaurante());
+        List<Produto> produtos = produtoController.listarPorRestaurante(idRest);
         if (produtos.isEmpty()) {
             System.out.println("Nenhum produto nesse restaurante.");
             return;
         }
 
-        boolean adicionar = true;
-        while (adicionar) {
-            System.out.println("\n--- PRODUTOS ---");
-            for (Produto p : produtos) {
-                System.out.println(p.getId_produto() + " - " + p.getNome() + " | R$ " + p.getPreco());
-            }
-
-            System.out.print("ID do produto: ");
-            int idProd = Integer.parseInt(sc.nextLine());
-            Produto p = produtoController.buscarPorId(idProd);
-            if (p == null) {
-                System.out.println("Produto inválido.");
-            }
-
-            System.out.print("Adicionar outro produto? (s/n): ");
-            adicionar = sc.nextLine().equalsIgnoreCase("s");
-        }
-
-        System.out.println("Pedido finalizado!");
+        pedidoController.fazerPedido(cliente, idRest, produtos, sc);
     }
 }

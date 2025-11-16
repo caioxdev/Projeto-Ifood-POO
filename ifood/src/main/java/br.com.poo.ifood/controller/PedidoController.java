@@ -13,7 +13,7 @@ public class PedidoController {
     private PedidoDAO dao = new PedidoDAO();
 
     // Método para fazer pedido
-    public void fazerPedido(Cliente cliente, List<Produto> produtos, Scanner sc) {
+    public void fazerPedido(Cliente cliente, int restauranteId, List<Produto> produtos, Scanner sc) {
         if (produtos.isEmpty()) {
             System.out.println("Nenhum produto disponível.");
             return;
@@ -21,6 +21,8 @@ public class PedidoController {
 
         Pedido pedido = new Pedido();
         pedido.setCliente_id(cliente.getId_cliente());
+        pedido.setRestaurante_id(restauranteId);
+
 
         double total = 0;
         boolean adicionar = true;

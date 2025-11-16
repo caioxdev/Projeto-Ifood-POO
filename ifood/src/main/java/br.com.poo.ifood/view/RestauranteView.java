@@ -13,25 +13,32 @@ public class RestauranteView {
     private RestauranteController controller = new RestauranteController();
     private ProdutoController produtoController = new ProdutoController();
 
-    public RestauranteView(Scanner sc) {
-        this.sc = sc;
-    }
+    // ================== Cores ANSI ==================
+    private static final String RESET = "\u001B[0m";
+    private static final String VERMELHO = "\u001B[31m";
+    private static final String VERDE = "\u001B[32m";
+    private static final String AMARELO = "\u001B[33m";
+    private static final String AZUL = "\u001B[34m";
+    private static final String ROXO = "\u001B[35m";
+    private static final String CIANO = "\u001B[36m";
+
+    public RestauranteView(Scanner sc) { this.sc = sc; }
 
     public void menu() {
         int op;
         do {
-            System.out.println("\n--- RESTAURANTE ---");
+            System.out.println(AZUL + "\n--- RESTAURANTE ---" + RESET);
             System.out.println("1. Cadastrar restaurante");
             System.out.println("2. Login restaurante");
             System.out.println("0. Voltar");
-            System.out.print("Opção: ");
+            System.out.print(AMARELO + "Opção: " + RESET);
             op = Integer.parseInt(sc.nextLine());
 
             switch (op) {
                 case 1 -> cadastrarRestaurante();
                 case 2 -> loginRestaurante();
-                case 0 -> System.out.println("Voltando...");
-                default -> System.out.println("Opção inválida!");
+                case 0 -> System.out.println(CIANO + "Voltando..." + RESET);
+                default -> System.out.println(VERMELHO + "Opção inválida!" + RESET);
             }
         } while (op != 0);
     }
@@ -48,9 +55,9 @@ public class RestauranteView {
         r.setCategoria_id(Integer.parseInt(sc.nextLine()));
 
         if (controller.cadastrar(r))
-            System.out.println("Restaurante cadastrado com sucesso! ID: " + r.getId_restaurante());
+            System.out.println(VERDE + "Restaurante cadastrado com sucesso! ID: " + r.getId_restaurante() + RESET);
         else
-            System.out.println("Erro ao cadastrar restaurante.");
+            System.out.println(VERMELHO + "Erro ao cadastrar restaurante." + RESET);
     }
 
     private void loginRestaurante() {
@@ -58,21 +65,36 @@ public class RestauranteView {
         int id = Integer.parseInt(sc.nextLine());
 
         Restaurante r = controller.buscarPorId(id);
-        if (r != null) painelRestaurante(r);
-        else System.out.println("Restaurante não encontrado!");
+        if (r != null) {
+            System.out.println(VERDE + "SUCESSO: Conectado com sucesso ao banco!" + RESET);
+            painelRestaurante(r);
+        } else {
+            System.out.println(VERMELHO + "Restaurante não encontrado!" + RESET);
+
+            // ================= LISTAGEM DE TESTE =================
+            System.out.println("\n--- RESTAURANTES CADASTRADOS PARA TESTE ---");
+            List<Restaurante> restaurantes = controller.listar();
+            if (restaurantes.isEmpty()) {
+                System.out.println(VERMELHO + "Nenhum restaurante cadastrado." + RESET);
+            } else {
+                for (Restaurante res : restaurantes) {
+                    System.out.println(res.getId_restaurante() + " - " + res.getNome() + " | Telefone: " + res.getTelefone());
+                }
+            }
+        }
     }
 
     private void painelRestaurante(Restaurante r) {
         int op;
         do {
-            System.out.println("\n--- PAINEL RESTAURANTE ---");
-            System.out.println("Logado como: " + r.getNome());
+            System.out.println(AZUL + "\n--- PAINEL RESTAURANTE ---" + RESET);
+            System.out.println("Logado como: " + CIANO + r.getNome() + RESET);
             System.out.println("1. Cadastrar produto");
             System.out.println("2. Listar produtos");
             System.out.println("3. Atualizar restaurante");
             System.out.println("4. Remover restaurante");
             System.out.println("0. Logout");
-            System.out.print("Opção: ");
+            System.out.print(AMARELO + "Opção: " + RESET);
             op = Integer.parseInt(sc.nextLine());
 
             switch (op) {
@@ -80,8 +102,8 @@ public class RestauranteView {
                 case 2 -> listarProdutos(r);
                 case 3 -> atualizarRestaurante(r);
                 case 4 -> removerRestaurante(r);
-                case 0 -> System.out.println("Logout realizado!");
-                default -> System.out.println("Opção inválida!");
+                case 0 -> System.out.println(CIANO + "Logout realizado!" + RESET);
+                default -> System.out.println(VERMELHO + "Opção inválida!" + RESET);
             }
         } while (op != 0);
     }
@@ -100,16 +122,16 @@ public class RestauranteView {
         p.setPreco(Double.parseDouble(sc.nextLine()));
 
         if (produtoController.cadastrar(p))
-            System.out.println("Produto cadastrado com sucesso!");
+            System.out.println(VERDE + "Produto cadastrado com sucesso!" + RESET);
         else
-            System.out.println("Erro ao cadastrar produto.");
+            System.out.println(VERMELHO + "Erro ao cadastrar produto." + RESET);
     }
 
     private void listarProdutos(Restaurante r) {
         List<Produto> produtos = produtoController.listarPorRestaurante(r.getId_restaurante());
-        if (produtos.isEmpty()) System.out.println("Nenhum produto cadastrado.");
+        if (produtos.isEmpty()) System.out.println(VERMELHO + "Nenhum produto cadastrado." + RESET);
         else {
-            System.out.println("\n--- PRODUTOS ---");
+            System.out.println(AZUL + "\n--- PRODUTOS ---" + RESET);
             for (Produto p : produtos) {
                 System.out.println(p.getId_produto() + " - " + p.getNome() + " | Qtd: " + p.getQuantidade() + " | R$ " + p.getPreco());
             }
@@ -134,9 +156,9 @@ public class RestauranteView {
         if (!cat.isEmpty()) r.setCategoria_id(Integer.parseInt(cat));
 
         if (controller.atualizar(r))
-            System.out.println("Restaurante atualizado com sucesso!");
+            System.out.println(VERDE + "Restaurante atualizado com sucesso!" + RESET);
         else
-            System.out.println("Erro ao atualizar restaurante.");
+            System.out.println(VERMELHO + "Erro ao atualizar restaurante." + RESET);
     }
 
     private void removerRestaurante(Restaurante r) {
@@ -144,9 +166,9 @@ public class RestauranteView {
         String resp = sc.nextLine();
         if (resp.equalsIgnoreCase("s")) {
             if (controller.remover(r.getId_restaurante()))
-                System.out.println("Restaurante removido com sucesso!");
+                System.out.println(VERDE + "Restaurante removido com sucesso!" + RESET);
             else
-                System.out.println("Erro ao remover restaurante.");
+                System.out.println(VERMELHO + "Erro ao remover restaurante." + RESET);
         }
     }
 }

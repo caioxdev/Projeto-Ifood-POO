@@ -4,9 +4,12 @@ import br.com.poo.ifood.database.Conexao;
 import br.com.poo.ifood.model.SuperAdmin;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SuperAdminDAO {
 
+    // ================= CADASTRAR =================
     public boolean cadastrar(SuperAdmin s) {
         String sql = "INSERT INTO superadmin (nome, email, senha, telefone) VALUES (?, ?, ?, ?)";
         try (Connection conn = Conexao.getConnection();
@@ -18,20 +21,21 @@ public class SuperAdminDAO {
             ps.setString(4, s.getTelefone());
 
             int linhas = ps.executeUpdate();
-            if(linhas == 0) return false;
+            if (linhas == 0) return false;
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
-                if(rs.next()) s.setId_admin(rs.getInt(1));
+                if (rs.next()) s.setId_admin(rs.getInt(1));
             }
 
             return true;
 
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             System.out.println("Erro ao cadastrar SuperAdmin: " + e.getMessage());
             return false;
         }
     }
 
+    // ================= LOGIN =================
     public SuperAdmin buscarPorEmailESenha(String email, String senha) {
         String sql = "SELECT * FROM superadmin WHERE email=? AND senha=?";
         try (Connection conn = Conexao.getConnection();
@@ -41,7 +45,7 @@ public class SuperAdminDAO {
             ps.setString(2, senha);
 
             try (ResultSet rs = ps.executeQuery()) {
-                if(rs.next()) {
+                if (rs.next()) {
                     SuperAdmin s = new SuperAdmin();
                     s.setId_admin(rs.getInt("id_superadmin"));
                     s.setNome(rs.getString("nome"));
@@ -52,9 +56,35 @@ public class SuperAdminDAO {
                 }
             }
 
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             System.out.println("Erro ao buscar SuperAdmin: " + e.getMessage());
         }
         return null;
+    }
+
+    // ================= LISTAR TODOS =================
+    public List<SuperAdmin> listarTodos() {
+        List<SuperAdmin> lista = new ArrayList<>();
+        String sql = "SELECT * FROM superadmin";
+
+        try (Connection conn = Conexao.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                SuperAdmin s = new SuperAdmin();
+                s.setId_admin(rs.getInt("id_superadmin"));
+                s.setNome(rs.getString("nome"));
+                s.setEmail(rs.getString("email"));
+                s.setSenha(rs.getString("senha"));
+                s.setTelefone(rs.getString("telefone"));
+                lista.add(s);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao listar SuperAdmins: " + e.getMessage());
+        }
+
+        return lista;
     }
 }
