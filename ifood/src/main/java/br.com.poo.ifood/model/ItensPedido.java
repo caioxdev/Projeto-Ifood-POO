@@ -1,28 +1,21 @@
 package br.com.poo.ifood.model;
 
-public class ItemPedido {
+public class ItensPedido {
     private int id_item;
     private int pedido_id;
     private int produto_id;
     private int quantidade;
     private double preco_unitario;
+    private Produto produto; // referência ao produto
 
-    public ItemPedido() {
+    public ItensPedido() {
     }
 
-    // usado quando o cliente adiciona ao carrinho (pedido ainda não existe)
-    public ItemPedido(int produto_id, int quantidade, double preco_unitario) {
-        this.produto_id = produto_id;
+    public ItensPedido(Produto produto, int quantidade, double preco_unitario) {
+        this.produto = produto;
         this.quantidade = quantidade;
         this.preco_unitario = preco_unitario;
-    }
-
-    // usado ao carregar do banco (SELECT)
-    public ItemPedido(int pedido_id, int produto_id, int quantidade, double preco_unitario) {
-        this.pedido_id = pedido_id;
-        this.produto_id = produto_id;
-        this.quantidade = quantidade;
-        this.preco_unitario = preco_unitario;
+        this.produto_id = produto.getId_produto();
     }
 
     public int getId_item() {
@@ -63,5 +56,13 @@ public class ItemPedido {
 
     public void setPreco_unitario(double preco_unitario) {
         this.preco_unitario = preco_unitario;
+    }
+
+    public Produto getProduto() {
+        return produto;
+    }
+
+    public void setProduto(Produto produto) {
+        this.produto = produto;
     }
 }

@@ -1,21 +1,13 @@
 package br.com.poo.ifood.model;
 
 public class Cliente {
-    private int id_cliente;
+    private int id_cliente;  // precisa ser exatamente este nome
     private String nome;
     private String email;
     private String senha;
     private String telefone;
 
-    public Cliente() {}
-
-    public Cliente(String nome, String email, String senha, String telefone) {
-        this.nome = nome;
-        this.email = email;
-        this.senha = senha;
-        this.telefone = telefone;
-    }
-
+    // Getters e Setters
     public int getId_cliente() {
         return id_cliente;
     }
@@ -53,6 +45,15 @@ public class Cliente {
     }
 
     public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    // Construtores (opcional)
+    public Cliente() {}
+    public Cliente(String nome, String email, String senha, String telefone) {
+        this.nome = nome;
+        this.email = email;
+        this.senha = senha;
         this.telefone = telefone;
     }
 }

@@ -19,7 +19,6 @@ public class Produto {
         this.preco = preco;
     }
 
-    // getters/setters
     public int getId_produto() {
         return id_produto;
     }

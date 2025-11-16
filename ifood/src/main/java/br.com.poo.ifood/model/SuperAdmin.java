@@ -1,12 +1,13 @@
 package br.com.poo.ifood.model;
 
 public class SuperAdmin {
-    private int id;
+    private int id_admin;
     private String nome;
     private String email;
     private String senha;
     private String telefone;
 
+    // Construtores
     public SuperAdmin() {
     }
 
@@ -17,13 +18,13 @@ public class SuperAdmin {
         this.telefone = telefone;
     }
 
-    // getters/setters
-    public int getId() {
-        return id;
+    // Getters e Setters
+    public int getId_admin() {
+        return id_admin;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setId_admin(int id_admin) {
+        this.id_admin = id_admin;
     }
 
     public String getNome() {
@@ -56,5 +57,15 @@ public class SuperAdmin {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    @Override
+    public String toString() {
+        return "SuperAdmin{" +
+                "id_admin=" + id_admin +
+                ", nome='" + nome + '\'' +
+                ", email='" + email + '\'' +
+                ", telefone='" + telefone + '\'' +
+                '}';
     }
 }

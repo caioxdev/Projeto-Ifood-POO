@@ -6,7 +6,6 @@ import br.com.poo.ifood.model.Categoria;
 import java.util.List;
 
 public class CategoriaController {
-
     private CategoriaDAO dao = new CategoriaDAO();
 
     public boolean cadastrar(Categoria c) {
@@ -17,16 +16,15 @@ public class CategoriaController {
         return dao.listar();
     }
 
+    public Categoria buscarPorId(int id) {
+        return dao.buscarPorId(id);
+    }
+
     public boolean atualizar(Categoria c) {
         return dao.atualizar(c);
     }
 
     public boolean remover(int id) {
         return dao.remover(id);
-    }
-
-    // <-- ADICIONE ESTE MÉTODO
-    public Categoria buscarPorId(int id) {
-        return dao.buscarPorId(id);
     }
 }

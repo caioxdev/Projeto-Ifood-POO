@@ -1,44 +1,30 @@
 package br.com.poo.ifood.model;
 
 public class Restaurante {
-
-    private int idRestaurante;
+    private int id_restaurante;
     private String nome;
     private String telefone;
     private String endereco;
-    private int categoriaId;
+    private int categoria_id;
     private double avaliacao;
 
     public Restaurante() {
     }
 
-    public Restaurante(int idRestaurante, String nome, String telefone, String endereco, int categoriaId, double avaliacao) {
-        this.idRestaurante = idRestaurante;
+    public Restaurante(String nome, String telefone, String endereco, int categoria_id) {
         this.nome = nome;
         this.telefone = telefone;
         this.endereco = endereco;
-        this.categoriaId = categoriaId;
-        this.avaliacao = avaliacao;
+        this.categoria_id = categoria_id;
+        this.avaliacao = 0;
     }
 
-    public Restaurante(String nome, String telefone, String endereco, int categoriaId, double avaliacao) {
-        this.nome = nome;
-        this.telefone = telefone;
-        this.endereco = endereco;
-        this.categoriaId = categoriaId;
-        this.avaliacao = avaliacao;
+    public int getId_restaurante() {
+        return id_restaurante;
     }
 
-    // -------------------------
-    // GETTERS E SETTERS OFICIAIS
-    // -------------------------
-
-    public int getIdRestaurante() {
-        return idRestaurante;
-    }
-
-    public void setIdRestaurante(int idRestaurante) {
-        this.idRestaurante = idRestaurante;
+    public void setId_restaurante(int id_restaurante) {
+        this.id_restaurante = id_restaurante;
     }
 
     public String getNome() {
@@ -65,12 +51,12 @@ public class Restaurante {
         this.endereco = endereco;
     }
 
-    public int getCategoriaId() {
-        return categoriaId;
+    public int getCategoria_id() {
+        return categoria_id;
     }
 
-    public void setCategoriaId(int categoriaId) {
-        this.categoriaId = categoriaId;
+    public void setCategoria_id(int categoria_id) {
+        this.categoria_id = categoria_id;
     }
 
     public double getAvaliacao() {
@@ -79,30 +65,5 @@ public class Restaurante {
 
     public void setAvaliacao(double avaliacao) {
         this.avaliacao = avaliacao;
-    }
-
-    // -------------------------------------
-    // GETTERS EXTRA para evitar erros na VIEW
-    // (Compatíveis com getId() e setId())
-    // -------------------------------------
-
-    public int getId() {
-        return idRestaurante;
-    }
-
-    public void setId(int id) {
-        this.idRestaurante = id;
-    }
-
-    @Override
-    public String toString() {
-        return "Restaurante {" +
-                "id=" + idRestaurante +
-                ", nome='" + nome + '\'' +
-                ", telefone='" + telefone + '\'' +
-                ", endereco='" + endereco + '\'' +
-                ", categoriaId=" + categoriaId +
-                ", avaliacao=" + avaliacao +
-                '}';
     }
 }

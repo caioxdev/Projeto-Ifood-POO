@@ -8,13 +8,8 @@ public class Pedido {
     private int cliente_id;
     private int restaurante_id;
     private double preco_total;
-    private List<ItemPedido> itens;
+    private List<ItensPedido> itens = new ArrayList<>();
 
-    public Pedido() {
-        itens = new ArrayList<>();
-    }
-
-    // Getters e setters
     public int getId_pedido() {
         return id_pedido;
     }
@@ -47,27 +42,11 @@ public class Pedido {
         this.preco_total = preco_total;
     }
 
-    public List<ItemPedido> getItens() {
+    public List<ItensPedido> getItens() {
         return itens;
     }
 
-    public void setItens(List<ItemPedido> itens) {
+    public void setItens(List<ItensPedido> itens) {
         this.itens = itens;
-    }
-
-    // **Método que faltava**
-    public void adicionarItem(ItemPedido item) {
-        this.itens.add(item);
-    }
-
-    @Override
-    public String toString() {
-        return "Pedido{" +
-                "id_pedido=" + id_pedido +
-                ", cliente_id=" + cliente_id +
-                ", restaurante_id=" + restaurante_id +
-                ", preco_total=" + preco_total +
-                ", itens=" + itens +
-                '}';
     }
 }

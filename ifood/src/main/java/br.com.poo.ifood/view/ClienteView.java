@@ -1,119 +1,145 @@
 package br.com.poo.ifood.view;
 
 import br.com.poo.ifood.controller.ClienteController;
+import br.com.poo.ifood.controller.PedidoController;
+import br.com.poo.ifood.controller.RestauranteController;
+import br.com.poo.ifood.controller.ProdutoController;
 import br.com.poo.ifood.model.Cliente;
+import br.com.poo.ifood.model.Pedido;
+import br.com.poo.ifood.model.Produto;
+import br.com.poo.ifood.model.ItensPedido;
+import br.com.poo.ifood.model.Restaurante;
 
 import java.util.List;
 import java.util.Scanner;
 
 public class ClienteView {
+    private Scanner sc;
     private ClienteController controller = new ClienteController();
+    private PedidoController pedidoController = new PedidoController();
+    private ProdutoController produtoController = new ProdutoController();
+    private RestauranteController restauranteController = new RestauranteController();
 
-    public void menu(Scanner sc) {
+    public ClienteView(Scanner sc) {
+        this.sc = sc;
+    }
+
+    public void menu() {
         int op;
         do {
-            System.out.println("\n--- CLIENTES ---");
+            System.out.println("\n--- CLIENTE ---");
             System.out.println("1. Cadastrar");
-            System.out.println("2. Listar");
-            System.out.println("3. Atualizar");
-            System.out.println("4. Remover");
+            System.out.println("2. Login");
             System.out.println("0. Voltar");
             System.out.print("Opção: ");
-
-            String line = sc.nextLine().trim();
-            if (line.isEmpty()) line = "0";
-            op = Integer.parseInt(line);
+            op = Integer.parseInt(sc.nextLine());
 
             switch (op) {
-                case 1 -> cadastrar(sc);
-                case 2 -> listar();
-                case 3 -> atualizar(sc);
-                case 4 -> remover(sc);
-                case 0 -> {}
-                default -> System.out.println("Opção inválida.");
+                case 1 -> cadastrar();
+                case 2 -> login();
+                case 0 -> System.out.println("Voltando...");
+                default -> System.out.println("Opção inválida!");
             }
         } while (op != 0);
     }
 
-    private void cadastrar(Scanner sc) {
+    private void cadastrar() {
+        Cliente c = new Cliente();
         System.out.print("Nome: ");
-        String nome = sc.nextLine();
+        c.setNome(sc.nextLine());
+        System.out.print("Email: ");
+        c.setEmail(sc.nextLine());
+        System.out.print("Senha: ");
+        c.setSenha(sc.nextLine());
+
+        if (controller.cadastrar(c)) System.out.println("Cliente cadastrado!");
+        else System.out.println("Erro ao cadastrar cliente.");
+    }
+
+    private void login() {
         System.out.print("Email: ");
         String email = sc.nextLine();
         System.out.print("Senha: ");
         String senha = sc.nextLine();
-        System.out.print("Telefone: ");
-        String telefone = sc.nextLine();
 
-        Cliente c = new Cliente();
-        c.setNome(nome);
-        c.setEmail(email);
-        c.setSenha(senha);
-        c.setTelefone(telefone);
-
-        if (controller.cadastrar(c)) {
-            System.out.println("Cliente cadastrado com sucesso!");
+        Cliente c = controller.buscarPorEmailESenha(email, senha);
+        if (c != null) {
+            System.out.println("SUCESSO: Conectado com sucesso ao banco!");
+            painelCliente(c);
         } else {
-            System.out.println("Erro ao cadastrar cliente.");
+            System.out.println("Erro: cliente não encontrado ou senha incorreta.");
         }
     }
 
-    private void listar() {
-        List<Cliente> clientes = controller.listar();
-        if (clientes.isEmpty()) {
-            System.out.println("Nenhum cliente encontrado.");
-        } else {
-            System.out.println("\n--- LISTA DE CLIENTES ---");
-            for (Cliente c : clientes) {
-                System.out.println(
-                        "ID: " + c.getId_cliente() +
-                                " | Nome: " + c.getNome() +
-                                " | Email: " + c.getEmail() +
-                                " | Telefone: " + c.getTelefone()
-                );
+    private void painelCliente(Cliente c) {
+        int op;
+        do {
+            System.out.println("\n--- PAINEL CLIENTE ---");
+            System.out.println("Logado como: " + c.getNome());
+            System.out.println("1. Fazer pedido");
+            System.out.println("2. Listar pedidos");
+            System.out.println("0. Logout");
+            System.out.print("Opção: ");
+            op = Integer.parseInt(sc.nextLine());
+
+            switch (op) {
+                case 1 -> fazerPedido(c);
+                case 2 -> listarPedidos(c);
+                case 0 -> System.out.println("Logout realizado!");
+                default -> System.out.println("Opção inválida!");
             }
-        }
+        } while (op != 0);
     }
 
-    private void atualizar(Scanner sc) {
-        listar();
-        System.out.print("ID do cliente a atualizar: ");
-        int id = Integer.parseInt(sc.nextLine());
-        Cliente c = controller.buscarPorId(id);
-        if (c == null) {
-            System.out.println("Cliente não encontrado.");
+    private void fazerPedido(Cliente cliente) {
+        List<Restaurante> restaurantes = restauranteController.listar();
+        if (restaurantes.isEmpty()) {
+            System.out.println("Nenhum restaurante disponível.");
             return;
         }
 
-        System.out.print("Novo nome (" + c.getNome() + "): ");
-        String nome = sc.nextLine();
-        System.out.print("Novo email (" + c.getEmail() + "): ");
-        String email = sc.nextLine();
-        System.out.print("Nova senha: ");
-        String senha = sc.nextLine();
-        System.out.print("Novo telefone (" + c.getTelefone() + "): ");
-        String tel = sc.nextLine();
-
-        c.setNome(nome.isEmpty() ? c.getNome() : nome);
-        c.setEmail(email.isEmpty() ? c.getEmail() : email);
-        c.setSenha(senha.isEmpty() ? c.getSenha() : senha);
-        c.setTelefone(tel.isEmpty() ? c.getTelefone() : tel);
-
-        if (controller.atualizar(c)) {
-            System.out.println("Cliente atualizado com sucesso!");
-        } else {
-            System.out.println("Erro ao atualizar cliente.");
+        System.out.println("\n--- RESTAURANTES ---");
+        for (Restaurante r : restaurantes) {
+            System.out.println(r.getId_restaurante() + " - " + r.getNome());
         }
+
+        System.out.print("Escolha o ID do restaurante: ");
+        int idRest = Integer.parseInt(sc.nextLine());
+        Restaurante r = restauranteController.buscarPorId(idRest);
+        if (r == null) {
+            System.out.println("Restaurante inválido.");
+            return;
+        }
+
+        List<Produto> produtos = produtoController.listarPorRestaurante(r.getId_restaurante());
+        if (produtos.isEmpty()) {
+            System.out.println("Nenhum produto nesse restaurante.");
+            return;
+        }
+
+        pedidoController.fazerPedido(cliente, produtos, sc);
     }
 
-    private void remover(Scanner sc) {
-        listar();
-        System.out.print("ID do cliente a remover: ");
-        int id = Integer.parseInt(sc.nextLine());
-        if (controller.remover(id)) {
-            System.out.println("Cliente removido com sucesso!");
-        } else {
-            System.out.println("Erro ao remover cliente.");
+    private void listarPedidos(Cliente c) {
+        List<Pedido> pedidos = pedidoController.listarPedidosPorCliente(c.getId_cliente());
+
+        if (pedidos.isEmpty()) {
+            System.out.println("Nenhum pedido encontrado.");
+            return;
+        }
+
+        for (Pedido p : pedidos) {
+            Restaurante r = restauranteController.buscarPorId(p.getRestaurante_id());
+            System.out.println("\nPedido ID: " + p.getId_pedido() +
+                    " | Restaurante: " + (r != null ? r.getNome() : "Desconhecido") +
+                    " | Total: R$ " + p.getPreco_total());
+
+            System.out.println("--- Itens ---");
+            for (ItensPedido item : p.getItens()) {
+                System.out.println("Produto ID: " + item.getProduto_id() +
+                        " | Quantidade: " + item.getQuantidade() +
+                        " | Preço unitário: R$ " + item.getPreco_unitario());
+            }
         }
     }
 }

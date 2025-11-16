@@ -3,60 +3,57 @@ package br.com.poo.ifood.dao;
 import br.com.poo.ifood.database.Conexao;
 import br.com.poo.ifood.model.SuperAdmin;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class SuperAdminDAO {
 
-    public boolean cadastrar(SuperAdmin sa) {
+    public boolean cadastrar(SuperAdmin s) {
         String sql = "INSERT INTO superadmin (nome, email, senha, telefone) VALUES (?, ?, ?, ?)";
-
         try (Connection conn = Conexao.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            stmt.setString(1, sa.getNome());
-            stmt.setString(2, sa.getEmail());
-            stmt.setString(3, sa.getSenha());
-            stmt.setString(4, sa.getTelefone());
+            ps.setString(1, s.getNome());
+            ps.setString(2, s.getEmail());
+            ps.setString(3, s.getSenha());
+            ps.setString(4, s.getTelefone());
 
-            int rows = stmt.executeUpdate();
+            int linhas = ps.executeUpdate();
+            if(linhas == 0) return false;
 
-            if (rows > 0) {
-                ResultSet rs = stmt.getGeneratedKeys();
-                if (rs.next()) {
-                    sa.setId(rs.getInt("id_superadmin"));
-                }
-                return true;
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if(rs.next()) s.setId_admin(rs.getInt(1));
             }
 
-        } catch (SQLException e) {
-            System.out.println("Erro ao cadastrar superadmin: " + e.getMessage());
+            return true;
+
+        } catch(SQLException e) {
+            System.out.println("Erro ao cadastrar SuperAdmin: " + e.getMessage());
+            return false;
         }
-        return false;
     }
 
-    public SuperAdmin buscarPorId(int id) {
-        String sql = "SELECT * FROM superadmin WHERE id_superadmin = ?";
+    public SuperAdmin buscarPorEmailESenha(String email, String senha) {
+        String sql = "SELECT * FROM superadmin WHERE email=? AND senha=?";
         try (Connection conn = Conexao.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
+            ps.setString(1, email);
+            ps.setString(2, senha);
 
-            if (rs.next()) {
-                SuperAdmin sa = new SuperAdmin();
-                sa.setId(rs.getInt("id_superadmin"));
-                sa.setNome(rs.getString("nome"));
-                sa.setEmail(rs.getString("email"));
-                sa.setSenha(rs.getString("senha"));
-                sa.setTelefone(rs.getString("telefone"));
-                return sa;
+            try (ResultSet rs = ps.executeQuery()) {
+                if(rs.next()) {
+                    SuperAdmin s = new SuperAdmin();
+                    s.setId_admin(rs.getInt("id_superadmin"));
+                    s.setNome(rs.getString("nome"));
+                    s.setEmail(rs.getString("email"));
+                    s.setSenha(rs.getString("senha"));
+                    s.setTelefone(rs.getString("telefone"));
+                    return s;
+                }
             }
 
-        } catch (SQLException e) {
-            System.out.println("Erro ao buscar superadmin: " + e.getMessage());
+        } catch(SQLException e) {
+            System.out.println("Erro ao buscar SuperAdmin: " + e.getMessage());
         }
         return null;
     }
