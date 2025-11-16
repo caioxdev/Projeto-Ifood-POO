@@ -13,7 +13,7 @@ O sistema possui três tipos de usuários: **Cliente**, **Restaurante** e **Supe
 - Java 21 ou superior
 - MySQL 8 ou superior
 - IDE IntelliJ IDEA (ou outra de preferência)
-- Maven (para gerenciamento de dependências, se utilizado)
+- Maven 
 
 ---
 
