@@ -16,15 +16,15 @@ public class CategoriaController {
         return dao.listar();
     }
 
-    public Categoria buscarPorId(int id) {
-        return dao.buscarPorId(id);
-    }
-
     public boolean atualizar(Categoria c) {
         return dao.atualizar(c);
     }
 
     public boolean remover(int id) {
         return dao.remover(id);
+    }
+
+    public Categoria buscarPorId(int id) {
+        return dao.buscarPorId(id);
     }
 }

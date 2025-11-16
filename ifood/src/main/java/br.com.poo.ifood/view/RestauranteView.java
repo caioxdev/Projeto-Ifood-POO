@@ -22,7 +22,9 @@ public class RestauranteView {
     private static final String ROXO = "\u001B[35m";
     private static final String CIANO = "\u001B[36m";
 
-    public RestauranteView(Scanner sc) { this.sc = sc; }
+    public RestauranteView(Scanner sc) {
+        this.sc = sc;
+    }
 
     public void menu() {
         int op;
@@ -61,26 +63,28 @@ public class RestauranteView {
     }
 
     private void loginRestaurante() {
-        System.out.print("ID do restaurante: ");
+        // Primeiro, listar todos os restaurantes com ID e nome
+        List<Restaurante> lista = controller.listar();
+        if (lista.isEmpty()) {
+            System.out.println(VERMELHO + "Nenhum restaurante cadastrado." + RESET);
+            return;
+        }
+
+        System.out.println(AZUL + "\n--- RESTAURANTES DISPONÍVEIS ---" + RESET);
+        for (Restaurante r : lista) {
+            System.out.println(r.getId_restaurante() + " - " + r.getNome() + " | Telefone: " + r.getTelefone());
+        }
+
+        // Solicitar o ID para o usuário
+        System.out.print("Digite o ID do restaurante para login: ");
         int id = Integer.parseInt(sc.nextLine());
 
         Restaurante r = controller.buscarPorId(id);
         if (r != null) {
-            System.out.println(VERDE + "SUCESSO: Conectado com sucesso ao banco!" + RESET);
+            System.out.println(VERDE + "Login realizado com sucesso! Restaurante: " + r.getNome() + RESET);
             painelRestaurante(r);
         } else {
-            System.out.println(VERMELHO + "Restaurante não encontrado!" + RESET);
-
-            // ================= LISTAGEM DE TESTE =================
-            System.out.println("\n--- RESTAURANTES CADASTRADOS PARA TESTE ---");
-            List<Restaurante> restaurantes = controller.listar();
-            if (restaurantes.isEmpty()) {
-                System.out.println(VERMELHO + "Nenhum restaurante cadastrado." + RESET);
-            } else {
-                for (Restaurante res : restaurantes) {
-                    System.out.println(res.getId_restaurante() + " - " + res.getNome() + " | Telefone: " + res.getTelefone());
-                }
-            }
+            System.out.println(VERMELHO + "ID inválido." + RESET);
         }
     }
 

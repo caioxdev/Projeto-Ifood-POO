@@ -12,10 +12,18 @@ import java.util.Scanner;
 public class PedidoController {
     private PedidoDAO dao = new PedidoDAO();
 
-    // Método para fazer pedido
+    // ================== Cores ANSI ==================
+    private static final String RESET = "\u001B[0m";
+    private static final String VERMELHO = "\u001B[31m";
+    private static final String VERDE = "\u001B[32m";
+    private static final String AMARELO = "\u001B[33m";
+    private static final String AZUL = "\u001B[34m";
+    private static final String ROXO = "\u001B[35m";
+    private static final String CIANO = "\u001B[36m";
+
     public void fazerPedido(Cliente cliente, int restauranteId, List<Produto> produtos, Scanner sc) {
         if (produtos.isEmpty()) {
-            System.out.println("Nenhum produto disponível.");
+            System.out.println(VERMELHO + "Nenhum produto disponível." + RESET);
             return;
         }
 
@@ -23,22 +31,21 @@ public class PedidoController {
         pedido.setCliente_id(cliente.getId_cliente());
         pedido.setRestaurante_id(restauranteId);
 
-
         double total = 0;
         boolean adicionar = true;
 
         while (adicionar) {
-            System.out.println("\n--- PRODUTOS ---");
+            System.out.println(AZUL + "\n--- PRODUTOS ---" + RESET);
             for (Produto p : produtos) {
                 System.out.println(p.getId_produto() + " - " + p.getNome() + " | R$ " + p.getPreco());
             }
 
-            System.out.print("ID do produto: ");
+            System.out.print(AMARELO + "ID do produto: " + RESET);
             int idProd = Integer.parseInt(sc.nextLine());
             Produto p = produtos.stream().filter(prod -> prod.getId_produto() == idProd).findFirst().orElse(null);
 
             if (p != null) {
-                System.out.print("Quantidade: ");
+                System.out.print(AMARELO + "Quantidade: " + RESET);
                 int qtd = Integer.parseInt(sc.nextLine());
 
                 ItensPedido item = new ItensPedido();
@@ -49,24 +56,28 @@ public class PedidoController {
                 pedido.getItens().add(item);
                 total += p.getPreco() * qtd;
             } else {
-                System.out.println("Produto inválido.");
+                System.out.println(VERMELHO + "Produto inválido." + RESET);
             }
 
-            System.out.print("Adicionar outro produto? (s/n): ");
+            System.out.print(AMARELO + "Adicionar outro produto? (s/n): " + RESET);
             adicionar = sc.nextLine().equalsIgnoreCase("s");
         }
 
         pedido.setPreco_total(total);
 
         if (dao.cadastrar(pedido)) {
-            System.out.println("Pedido realizado! Total: R$ " + total);
+            System.out.println(VERDE + "Pedido realizado! Total: R$ " + total + RESET);
         } else {
-            System.out.println("Erro ao realizar pedido.");
+            System.out.println(VERMELHO + "Erro ao realizar pedido." + RESET);
         }
     }
 
-    // Método **corrigido**: retorna lista de pedidos de um cliente
     public List<Pedido> listarPedidosPorCliente(int clienteId) {
         return dao.listarPorCliente(clienteId);
     }
+
+    public List<Pedido> listarTodos() {
+        return dao.listarTodos();
+    }
+
 }

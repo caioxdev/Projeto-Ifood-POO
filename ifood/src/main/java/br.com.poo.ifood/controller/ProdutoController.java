@@ -8,23 +8,28 @@ import java.util.List;
 public class ProdutoController {
     private ProdutoDAO dao = new ProdutoDAO();
 
-    // Listar todos os produtos
+    public boolean cadastrar(Produto p) {
+        return dao.cadastrar(p);
+    }
+
     public List<Produto> listar() {
         return dao.listar();
     }
 
-    // Buscar produto por ID
     public Produto buscarPorId(int id) {
         return dao.buscarPorId(id);
     }
 
-    // **Novo método**: listar produtos por restaurante
-    public List<Produto> listarPorRestaurante(int restauranteId) {
-        return dao.listarPorRestaurante(restauranteId);
+    public boolean atualizar(Produto p) {
+        // Aqui precisa implementar um método atualizar no DAO
+        return dao.atualizar(p);
     }
 
-    // Cadastrar produto
-    public boolean cadastrar(Produto p) {
-        return dao.cadastrar(p);
+    public boolean remover(int id) {
+        return dao.remover(id);
+    }
+
+    public List<Produto> listarPorRestaurante(int restauranteId) {
+        return dao.listarPorRestaurante(restauranteId);
     }
 }

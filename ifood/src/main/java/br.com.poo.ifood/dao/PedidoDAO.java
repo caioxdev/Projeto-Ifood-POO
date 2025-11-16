@@ -104,4 +104,31 @@ public class PedidoDAO {
         }
         return itens;
     }
+
+    // ================== Listar todos os pedidos ==================
+    public List<Pedido> listarTodos() {
+        List<Pedido> pedidos = new ArrayList<>();
+        String sql = "SELECT * FROM pedido";
+
+        try (Connection con = Conexao.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Pedido p = new Pedido();
+                p.setId_pedido(rs.getInt("id_pedido"));
+                p.setCliente_id(rs.getInt("cliente_id"));
+                p.setRestaurante_id(rs.getInt("restaurante_id"));
+                p.setPreco_total(rs.getDouble("preco_total"));
+                // Pega os itens do pedido
+                p.setItens(listarItensDoPedido(p.getId_pedido()));
+                pedidos.add(p);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao listar todos os pedidos: " + e.getMessage());
+        }
+
+        return pedidos;
+    }
 }

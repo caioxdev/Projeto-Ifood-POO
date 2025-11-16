@@ -43,7 +43,7 @@ public class ProdutoDAO {
 
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
-            if(rs.next()) {
+            if (rs.next()) {
                 Produto p = new Produto();
                 p.setId_produto(rs.getInt("id_produto"));
                 p.setNome(rs.getString("nome"));
@@ -60,7 +60,7 @@ public class ProdutoDAO {
         return null;
     }
 
-    // **Novo método**: listar produtos de um restaurante
+    // Listar produtos de um restaurante
     public List<Produto> listarPorRestaurante(int restauranteId) {
         List<Produto> produtos = new ArrayList<>();
         String sql = "SELECT * FROM produto WHERE restaurante_id = ?";
@@ -103,6 +103,41 @@ public class ProdutoDAO {
 
         } catch (SQLException e) {
             System.out.println("Erro ao cadastrar produto: " + e.getMessage());
+        }
+        return false;
+    }
+
+    // Atualizar produto
+    public boolean atualizar(Produto p) {
+        String sql = "UPDATE produto SET nome=?, descricao=?, preco=?, quantidade=? WHERE id_produto=?";
+        try (Connection con = Conexao.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, p.getNome());
+            ps.setString(2, p.getDescricao());
+            ps.setDouble(3, p.getPreco());
+            ps.setInt(4, p.getQuantidade());
+            ps.setInt(5, p.getId_produto());
+
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar produto: " + e.getMessage());
+        }
+        return false;
+    }
+
+    // Remover produto
+    public boolean remover(int id) {
+        String sql = "DELETE FROM produto WHERE id_produto=?";
+        try (Connection con = Conexao.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao remover produto: " + e.getMessage());
         }
         return false;
     }

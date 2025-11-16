@@ -14,7 +14,18 @@ public class SuperAdminController {
         return dao.cadastrar(s);
     }
 
-    // ================= LOGIN =================
+    // ================= BUSCAR POR ID =================
+    public SuperAdmin buscarPorId(int id) {
+        List<SuperAdmin> lista = dao.listarTodos();
+        for(SuperAdmin s : lista) {
+            if(s.getId_admin() == id) {
+                return s;
+            }
+        }
+        return null;
+    }
+
+    // ================= BUSCAR POR EMAIL E SENHA =================
     public SuperAdmin buscarPorEmailESenha(String email, String senha) {
         return dao.buscarPorEmailESenha(email, senha);
     }
