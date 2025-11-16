@@ -11,16 +11,10 @@ public class Pedido {
     private List<ItemPedido> itens;
 
     public Pedido() {
-        this.itens = new ArrayList<>();
+        itens = new ArrayList<>();
     }
 
-    public Pedido(int cliente_id, int restaurante_id, double preco_total) {
-        this.cliente_id = cliente_id;
-        this.restaurante_id = restaurante_id;
-        this.preco_total = preco_total;
-        this.itens = new ArrayList<>();
-    }
-
+    // Getters e setters
     public int getId_pedido() {
         return id_pedido;
     }
@@ -53,7 +47,6 @@ public class Pedido {
         this.preco_total = preco_total;
     }
 
-    // GET e SET para itens
     public List<ItemPedido> getItens() {
         return itens;
     }
@@ -62,22 +55,19 @@ public class Pedido {
         this.itens = itens;
     }
 
-    // Adiciona um item ao pedido
+    // **Método que faltava**
     public void adicionarItem(ItemPedido item) {
         this.itens.add(item);
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Pedido ID: ").append(id_pedido)
-                .append(" | Cliente ID: ").append(cliente_id)
-                .append(" | Restaurante ID: ").append(restaurante_id)
-                .append(" | Total: R$").append(String.format("%.2f", preco_total))
-                .append("\nItens:\n");
-        for (ItemPedido item : itens) {
-            sb.append(item).append("\n");
-        }
-        return sb.toString();
+        return "Pedido{" +
+                "id_pedido=" + id_pedido +
+                ", cliente_id=" + cliente_id +
+                ", restaurante_id=" + restaurante_id +
+                ", preco_total=" + preco_total +
+                ", itens=" + itens +
+                '}';
     }
 }

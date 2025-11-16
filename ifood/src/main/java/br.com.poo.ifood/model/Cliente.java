@@ -7,8 +7,7 @@ public class Cliente {
     private String senha;
     private String telefone;
 
-    public Cliente() {
-    }
+    public Cliente() {}
 
     public Cliente(String nome, String email, String senha, String telefone) {
         this.nome = nome;
@@ -55,10 +54,5 @@ public class Cliente {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
-    }
-
-    @Override
-    public String toString() {
-        return id_cliente + " | " + nome + " | " + email + " | " + telefone;
     }
 }

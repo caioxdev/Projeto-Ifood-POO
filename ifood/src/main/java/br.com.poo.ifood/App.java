@@ -29,7 +29,7 @@ public class App {
                 case 3 -> {
                     // Chama a view do SuperAdmin
                     SuperAdminView superAdminView = new SuperAdminView(sc);
-                    superAdminView.iniciar(); // login e menu completo
+                    superAdminView.loginMenu(); // login e menu completo
                 }
                 case 0 -> System.out.println("Saindo do sistema...");
                 default -> System.out.println("Opção inválida!");

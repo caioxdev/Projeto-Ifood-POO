@@ -1,40 +1,29 @@
 package br.com.poo.ifood.model;
 
 public class SuperAdmin {
-    private static int contador = 1;
-    private int id_superadmin;
+    private int id;
     private String nome;
     private String email;
     private String senha;
     private String telefone;
 
     public SuperAdmin() {
-        this.id_superadmin = contador++;
     }
 
     public SuperAdmin(String nome, String email, String senha, String telefone) {
-        this.id_superadmin = contador++;
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.telefone = telefone;
     }
 
-    public int getId_superadmin() {
-        return id_superadmin;
-    }
-
-    public void setId_superadmin(int id_superadmin) {
-        this.id_superadmin = id_superadmin;
-    }
-
-    // Métodos getId e setId para compatibilidade com Controller/View
+    // getters/setters
     public int getId() {
-        return id_superadmin;
+        return id;
     }
 
     public void setId(int id) {
-        this.id_superadmin = id;
+        this.id = id;
     }
 
     public String getNome() {
@@ -67,10 +56,5 @@ public class SuperAdmin {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
-    }
-
-    @Override
-    public String toString() {
-        return id_superadmin + " | " + nome + " | " + email + " | " + telefone;
     }
 }

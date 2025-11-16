@@ -21,8 +21,12 @@ public class ClienteCadastroView {
 
         Cliente cliente = new Cliente(nome, email, senha, telefone);
 
+        // grava no BD
         if (clienteController.cadastrar(cliente)) {
+
+            // EXIBE O ID CORRETO
             System.out.println("Cliente cadastrado com sucesso! ID: " + cliente.getId_cliente());
+
         } else {
             System.out.println("Erro ao cadastrar cliente.");
         }

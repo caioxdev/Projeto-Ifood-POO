@@ -26,7 +26,7 @@ public class SuperAdminDAO {
             if (rows > 0) {
                 ResultSet rs = stmt.getGeneratedKeys();
                 if (rs.next()) {
-                    sa.setId_superadmin(rs.getInt(1));
+                    sa.setId(rs.getInt("id_superadmin"));
                 }
                 return true;
             }
@@ -47,7 +47,7 @@ public class SuperAdminDAO {
 
             if (rs.next()) {
                 SuperAdmin sa = new SuperAdmin();
-                sa.setId_superadmin(rs.getInt("id_superadmin"));
+                sa.setId(rs.getInt("id_superadmin"));
                 sa.setNome(rs.getString("nome"));
                 sa.setEmail(rs.getString("email"));
                 sa.setSenha(rs.getString("senha"));

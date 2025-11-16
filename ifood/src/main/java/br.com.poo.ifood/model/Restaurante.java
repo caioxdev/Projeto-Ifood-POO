@@ -1,65 +1,108 @@
 package br.com.poo.ifood.model;
 
 public class Restaurante {
-    private static int contador = 1;
-    private int id_restaurante;
+
+    private int idRestaurante;
     private String nome;
     private String telefone;
     private String endereco;
-    private int categoria_id;
+    private int categoriaId;
     private double avaliacao;
-    private boolean ativo;
 
-    // Construtor vazio
     public Restaurante() {
-        this.id_restaurante = contador++;
-        this.ativo = true;
     }
 
-    // Construtor existente: 5 parâmetros
-    public Restaurante(String nome, String telefone, String endereco, int categoria_id, double avaliacao) {
-        this.id_restaurante = contador++;
+    public Restaurante(int idRestaurante, String nome, String telefone, String endereco, int categoriaId, double avaliacao) {
+        this.idRestaurante = idRestaurante;
         this.nome = nome;
         this.telefone = telefone;
         this.endereco = endereco;
-        this.categoria_id = categoria_id;
+        this.categoriaId = categoriaId;
         this.avaliacao = avaliacao;
-        this.ativo = true;
     }
 
-    // Construtor necessário para o DAO (3 parâmetros)
-    public Restaurante(int id_restaurante, String nome, String telefone) {
-        this.id_restaurante = id_restaurante;
+    public Restaurante(String nome, String telefone, String endereco, int categoriaId, double avaliacao) {
         this.nome = nome;
         this.telefone = telefone;
-        this.ativo = true;
+        this.endereco = endereco;
+        this.categoriaId = categoriaId;
+        this.avaliacao = avaliacao;
     }
 
-    // Getters e Setters
-    public int getId() { return id_restaurante; }
-    public void setId(int id) { this.id_restaurante = id; }
+    // -------------------------
+    // GETTERS E SETTERS OFICIAIS
+    // -------------------------
 
-    public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
+    public int getIdRestaurante() {
+        return idRestaurante;
+    }
 
-    public String getTelefone() { return telefone; }
-    public void setTelefone(String telefone) { this.telefone = telefone; }
+    public void setIdRestaurante(int idRestaurante) {
+        this.idRestaurante = idRestaurante;
+    }
 
-    public String getEndereco() { return endereco; }
-    public void setEndereco(String endereco) { this.endereco = endereco; }
+    public String getNome() {
+        return nome;
+    }
 
-    public int getCategoria_id() { return categoria_id; }
-    public void setCategoria_id(int categoria_id) { this.categoria_id = categoria_id; }
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 
-    public double getAvaliacao() { return avaliacao; }
-    public void setAvaliacao(double avaliacao) { this.avaliacao = avaliacao; }
+    public String getTelefone() {
+        return telefone;
+    }
 
-    public boolean isAtivo() { return ativo; }
-    public void setAtivo(boolean ativo) { this.ativo = ativo; }
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
+    }
+
+    public int getCategoriaId() {
+        return categoriaId;
+    }
+
+    public void setCategoriaId(int categoriaId) {
+        this.categoriaId = categoriaId;
+    }
+
+    public double getAvaliacao() {
+        return avaliacao;
+    }
+
+    public void setAvaliacao(double avaliacao) {
+        this.avaliacao = avaliacao;
+    }
+
+    // -------------------------------------
+    // GETTERS EXTRA para evitar erros na VIEW
+    // (Compatíveis com getId() e setId())
+    // -------------------------------------
+
+    public int getId() {
+        return idRestaurante;
+    }
+
+    public void setId(int id) {
+        this.idRestaurante = id;
+    }
 
     @Override
     public String toString() {
-        return id_restaurante + " | " + nome + " | " + telefone + " | " + endereco +
-                " | Categoria: " + categoria_id + " | Avaliação: " + avaliacao + " | Ativo: " + ativo;
+        return "Restaurante {" +
+                "id=" + idRestaurante +
+                ", nome='" + nome + '\'' +
+                ", telefone='" + telefone + '\'' +
+                ", endereco='" + endereco + '\'' +
+                ", categoriaId=" + categoriaId +
+                ", avaliacao=" + avaliacao +
+                '}';
     }
 }

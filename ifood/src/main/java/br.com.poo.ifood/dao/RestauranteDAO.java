@@ -3,130 +3,129 @@ package br.com.poo.ifood.dao;
 import br.com.poo.ifood.database.Conexao;
 import br.com.poo.ifood.model.Restaurante;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RestauranteDAO {
 
-    // --- CADASTRAR RESTAURANTE ---
     public boolean cadastrar(Restaurante r) {
-        String sql = """
-            INSERT INTO restaurante (nome, telefone, endereco, categoria_id, avaliacao, ativo)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """;
+        String sql = "INSERT INTO restaurante (nome, telefone, endereco, categoria_id, avaliacao) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = Conexao.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            stmt.setString(1, r.getNome());
-            stmt.setString(2, r.getTelefone());
-            stmt.setString(3, r.getEndereco());
-            stmt.setInt(4, r.getCategoria_id());
-            stmt.setDouble(5, r.getAvaliacao());
-            stmt.setBoolean(6, r.isAtivo());
+            ps.setString(1, r.getNome());
+            ps.setString(2, r.getTelefone());
+            ps.setString(3, r.getEndereco());
+            ps.setInt(4, r.getCategoriaId());
+            ps.setDouble(5, r.getAvaliacao());
 
-            stmt.executeUpdate();
-            return true;
+            int linhas = ps.executeUpdate();
 
-        } catch (Exception e) {
-            System.out.println("ERRO ao cadastrar restaurante: " + e.getMessage());
-            return false;
+            if (linhas > 0) {
+                ResultSet rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    r.setIdRestaurante(rs.getInt(1));
+                }
+                return true;
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao cadastrar restaurante: " + e.getMessage());
         }
+
+        return false;
     }
 
-    // --- LISTAR TODOS ---
     public List<Restaurante> listar() {
         List<Restaurante> lista = new ArrayList<>();
         String sql = "SELECT * FROM restaurante";
 
         try (Connection conn = Conexao.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                Restaurante r = new Restaurante(
-                        rs.getInt("id_restaurante"),
-                        rs.getString("nome"),
-                        rs.getString("telefone")
-                );
+                Restaurante r = new Restaurante();
+                r.setIdRestaurante(rs.getInt("id_restaurante"));
+                r.setNome(rs.getString("nome"));
+                r.setTelefone(rs.getString("telefone"));
+                r.setEndereco(rs.getString("endereco"));
+                r.setCategoriaId(rs.getInt("categoria_id"));
+                r.setAvaliacao(rs.getDouble("avaliacao"));
+
                 lista.add(r);
             }
 
-        } catch (Exception e) {
-            System.out.println("ERRO ao listar restaurantes: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("Erro ao listar restaurantes: " + e.getMessage());
         }
 
         return lista;
     }
 
-    // --- BUSCAR POR ID ---
     public Restaurante buscarPorId(int id) {
         String sql = "SELECT * FROM restaurante WHERE id_restaurante = ?";
+        Restaurante r = null;
 
         try (Connection conn = Conexao.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                return new Restaurante(
-                        rs.getInt("id_restaurante"),
-                        rs.getString("nome"),
-                        rs.getString("telefone")
-                );
+                r = new Restaurante();
+                r.setIdRestaurante(rs.getInt("id_restaurante"));
+                r.setNome(rs.getString("nome"));
+                r.setTelefone(rs.getString("telefone"));
+                r.setEndereco(rs.getString("endereco"));
+                r.setCategoriaId(rs.getInt("categoria_id"));
+                r.setAvaliacao(rs.getDouble("avaliacao"));
             }
 
-        } catch (Exception e) {
-            System.out.println("ERRO ao buscar restaurante: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar restaurante: " + e.getMessage());
         }
 
-        return null;
+        return r;
     }
 
-    // --- ATUALIZAR RESTAURANTE ---
     public boolean atualizar(Restaurante r) {
-        String sql = """
-            UPDATE restaurante 
-            SET nome = ?, telefone = ?, endereco = ?, categoria_id = ?, avaliacao = ?, ativo = ?
-            WHERE id_restaurante = ?
-        """;
+        String sql = "UPDATE restaurante SET nome=?, telefone=?, endereco=?, categoria_id=?, avaliacao=? WHERE id_restaurante=?";
 
         try (Connection conn = Conexao.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, r.getNome());
-            stmt.setString(2, r.getTelefone());
-            stmt.setString(3, r.getEndereco());
-            stmt.setInt(4, r.getCategoria_id());
-            stmt.setDouble(5, r.getAvaliacao());
-            stmt.setBoolean(6, r.isAtivo());
-            stmt.setInt(7, r.getId());
+            ps.setString(1, r.getNome());
+            ps.setString(2, r.getTelefone());
+            ps.setString(3, r.getEndereco());
+            ps.setInt(4, r.getCategoriaId());
+            ps.setDouble(5, r.getAvaliacao());
+            ps.setInt(6, r.getIdRestaurante());
 
-            return stmt.executeUpdate() > 0;
+            return ps.executeUpdate() > 0;
 
-        } catch (Exception e) {
-            System.out.println("ERRO ao atualizar restaurante: " + e.getMessage());
-            return false;
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar restaurante: " + e.getMessage());
         }
+
+        return false;
     }
 
-    // --- REMOVER RESTAURANTE ---
     public boolean remover(int id) {
         String sql = "DELETE FROM restaurante WHERE id_restaurante = ?";
 
         try (Connection conn = Conexao.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            stmt.setInt(1, id);
-            return stmt.executeUpdate() > 0;
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
 
-        } catch (Exception e) {
-            System.out.println("ERRO ao remover restaurante: " + e.getMessage());
-            return false;
+        } catch (SQLException e) {
+            System.out.println("Erro ao remover restaurante: " + e.getMessage());
         }
+
+        return false;
     }
 }

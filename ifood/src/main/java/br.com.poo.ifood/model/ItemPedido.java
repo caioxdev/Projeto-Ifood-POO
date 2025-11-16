@@ -10,14 +10,14 @@ public class ItemPedido {
     public ItemPedido() {
     }
 
-    // Construtor usado quando o pedido_id ainda não existe
+    // usado quando o cliente adiciona ao carrinho (pedido ainda não existe)
     public ItemPedido(int produto_id, int quantidade, double preco_unitario) {
         this.produto_id = produto_id;
         this.quantidade = quantidade;
         this.preco_unitario = preco_unitario;
     }
 
-    // Construtor completo, quando já se tem o pedido_id
+    // usado ao carregar do banco (SELECT)
     public ItemPedido(int pedido_id, int produto_id, int quantidade, double preco_unitario) {
         this.pedido_id = pedido_id;
         this.produto_id = produto_id;
@@ -63,10 +63,5 @@ public class ItemPedido {
 
     public void setPreco_unitario(double preco_unitario) {
         this.preco_unitario = preco_unitario;
-    }
-
-    @Override
-    public String toString() {
-        return id_item + " | Prod:" + produto_id + " | Qtd:" + quantidade + " | R$" + preco_unitario;
     }
 }

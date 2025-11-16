@@ -1,27 +1,24 @@
 package br.com.poo.ifood.model;
 
 public class Categoria {
-    private static int contador = 1;
-    private int id_categoria;
+    private int id;
     private String nome;
     private String descricao;
 
     public Categoria() {
-        this.id_categoria = contador++;
     }
 
     public Categoria(String nome, String descricao) {
-        this.id_categoria = contador++;
         this.nome = nome;
         this.descricao = descricao;
     }
 
     public int getId() {
-        return id_categoria;
+        return id;
     }
 
     public void setId(int id) {
-        this.id_categoria = id;
+        this.id = id;
     }
 
     public String getNome() {
@@ -42,6 +39,6 @@ public class Categoria {
 
     @Override
     public String toString() {
-        return id_categoria + " | " + nome + " | " + descricao;
+        return id + " - " + nome + " - " + descricao;
     }
 }

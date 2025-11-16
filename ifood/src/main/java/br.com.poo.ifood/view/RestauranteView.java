@@ -62,13 +62,12 @@ public class RestauranteView {
             System.out.println("\n--- LISTA DE RESTAURANTES ---");
             for (Restaurante r : restaurantes) {
                 System.out.println(
-                        "ID: " + r.getId() +
+                        "ID: " + r.getIdRestaurante() +
                                 " | Nome: " + r.getNome() +
                                 " | Endereço: " + r.getEndereco() +
                                 " | Telefone: " + r.getTelefone() +
-                                " | Categoria: " + r.getCategoria_id() +
-                                " | Avaliação: " + r.getAvaliacao() +
-                                " | Ativo: " + r.isAtivo()
+                                " | Categoria: " + r.getCategoriaId() +
+                                " | Avaliação: " + r.getAvaliacao()
                 );
             }
         }
@@ -90,7 +89,7 @@ public class RestauranteView {
         String tel = sc.nextLine();
         System.out.print("Novo endereço (" + r.getEndereco() + "): ");
         String end = sc.nextLine();
-        System.out.print("Nova categoria (" + r.getCategoria_id() + "): ");
+        System.out.print("Nova categoria (" + r.getCategoriaId() + "): ");
         String catStr = sc.nextLine();
         System.out.print("Nova avaliação (" + r.getAvaliacao() + "): ");
         String avalStr = sc.nextLine();
@@ -98,7 +97,7 @@ public class RestauranteView {
         r.setNome(nome.isEmpty() ? r.getNome() : nome);
         r.setTelefone(tel.isEmpty() ? r.getTelefone() : tel);
         r.setEndereco(end.isEmpty() ? r.getEndereco() : end);
-        r.setCategoria_id(catStr.isEmpty() ? r.getCategoria_id() : Integer.parseInt(catStr));
+        r.setCategoriaId(catStr.isEmpty() ? r.getCategoriaId() : Integer.parseInt(catStr));
         r.setAvaliacao(avalStr.isEmpty() ? r.getAvaliacao() : Double.parseDouble(avalStr));
 
         if (controller.atualizar(r)) {

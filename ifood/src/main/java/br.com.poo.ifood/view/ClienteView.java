@@ -19,6 +19,7 @@ public class ClienteView {
             System.out.println("4. Remover");
             System.out.println("0. Voltar");
             System.out.print("Opção: ");
+
             String line = sc.nextLine().trim();
             if (line.isEmpty()) line = "0";
             op = Integer.parseInt(line);
@@ -51,7 +52,7 @@ public class ClienteView {
         c.setTelefone(telefone);
 
         if (controller.cadastrar(c)) {
-            System.out.println("Cliente cadastrado com sucesso! ID: " + c.getId_cliente());
+            System.out.println("Cliente cadastrado com sucesso!");
         } else {
             System.out.println("Erro ao cadastrar cliente.");
         }
@@ -60,10 +61,17 @@ public class ClienteView {
     private void listar() {
         List<Cliente> clientes = controller.listar();
         if (clientes.isEmpty()) {
-            System.out.println("Nenhum cliente cadastrado.");
+            System.out.println("Nenhum cliente encontrado.");
         } else {
             System.out.println("\n--- LISTA DE CLIENTES ---");
-            clientes.forEach(System.out::println);
+            for (Cliente c : clientes) {
+                System.out.println(
+                        "ID: " + c.getId_cliente() +
+                                " | Nome: " + c.getNome() +
+                                " | Email: " + c.getEmail() +
+                                " | Telefone: " + c.getTelefone()
+                );
+            }
         }
     }
 
@@ -71,7 +79,6 @@ public class ClienteView {
         listar();
         System.out.print("ID do cliente a atualizar: ");
         int id = Integer.parseInt(sc.nextLine());
-
         Cliente c = controller.buscarPorId(id);
         if (c == null) {
             System.out.println("Cliente não encontrado.");
@@ -85,12 +92,12 @@ public class ClienteView {
         System.out.print("Nova senha: ");
         String senha = sc.nextLine();
         System.out.print("Novo telefone (" + c.getTelefone() + "): ");
-        String telefone = sc.nextLine();
+        String tel = sc.nextLine();
 
-        if (!nome.isEmpty()) c.setNome(nome);
-        if (!email.isEmpty()) c.setEmail(email);
-        if (!senha.isEmpty()) c.setSenha(senha);
-        if (!telefone.isEmpty()) c.setTelefone(telefone);
+        c.setNome(nome.isEmpty() ? c.getNome() : nome);
+        c.setEmail(email.isEmpty() ? c.getEmail() : email);
+        c.setSenha(senha.isEmpty() ? c.getSenha() : senha);
+        c.setTelefone(tel.isEmpty() ? c.getTelefone() : tel);
 
         if (controller.atualizar(c)) {
             System.out.println("Cliente atualizado com sucesso!");
@@ -103,7 +110,6 @@ public class ClienteView {
         listar();
         System.out.print("ID do cliente a remover: ");
         int id = Integer.parseInt(sc.nextLine());
-
         if (controller.remover(id)) {
             System.out.println("Cliente removido com sucesso!");
         } else {
