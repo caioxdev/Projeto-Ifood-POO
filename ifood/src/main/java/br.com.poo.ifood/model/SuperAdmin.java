@@ -7,9 +7,7 @@ public class SuperAdmin {
     private String senha;
     private String telefone;
 
-    // Construtores
-    public SuperAdmin() {
-    }
+    public SuperAdmin() {}
 
     public SuperAdmin(String nome, String email, String senha, String telefone) {
         this.nome = nome;
@@ -18,7 +16,6 @@ public class SuperAdmin {
         this.telefone = telefone;
     }
 
-    // Getters e Setters
     public int getId_admin() {
         return id_admin;
     }

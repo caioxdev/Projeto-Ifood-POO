@@ -7,7 +7,15 @@ public class Cliente {
     private String senha;
     private String telefone;
 
-    // Getters e Setters
+    public Cliente() {}
+
+    public Cliente(String nome, String email, String senha, String telefone) {
+        this.nome = nome;
+        this.email = email;
+        this.senha = senha;
+        this.telefone = telefone;
+    }
+
     public int getId_cliente() {
         return id_cliente;
     }
@@ -45,15 +53,6 @@ public class Cliente {
     }
 
     public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    // Construtores (opcional)
-    public Cliente() {}
-    public Cliente(String nome, String email, String senha, String telefone) {
-        this.nome = nome;
-        this.email = email;
-        this.senha = senha;
         this.telefone = telefone;
     }
 }

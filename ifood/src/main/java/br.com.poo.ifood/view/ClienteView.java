@@ -162,7 +162,6 @@ public class ClienteView {
         }
     }
 
-    // ================= FAVORITOS =================
     private void menuFavoritos(Cliente c) {
         int op;
         do {

@@ -41,7 +41,7 @@ public class CategoriaDAO {
                 Categoria c = new Categoria();
                 c.setId_categoria(rs.getInt("id_categoria"));
                 c.setNome(rs.getString("nome"));
-                c.setDescricao(rs.getString("descricao")); // pega descrição
+                c.setDescricao(rs.getString("descricao"));
                 lista.add(c);
             }
 

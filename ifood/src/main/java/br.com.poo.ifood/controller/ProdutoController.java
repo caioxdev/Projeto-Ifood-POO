@@ -21,7 +21,6 @@ public class ProdutoController {
     }
 
     public boolean atualizar(Produto p) {
-        // Aqui precisa implementar um método atualizar no DAO
         return dao.atualizar(p);
     }
 

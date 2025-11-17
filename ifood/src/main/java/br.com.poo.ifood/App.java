@@ -10,8 +10,7 @@ public class App {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-
-        // Cores ANSI para o menu principal
+        
         final String RESET = "\u001B[0m";
         final String AZUL = "\u001B[34m";
         final String AMARELO = "\u001B[33m";

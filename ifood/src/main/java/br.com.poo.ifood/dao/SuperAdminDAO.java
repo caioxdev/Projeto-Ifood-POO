@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SuperAdminDAO {
-
-    // ================= CADASTRAR =================
     public boolean cadastrar(SuperAdmin s) {
         String sql = "INSERT INTO superadmin (nome, email, senha, telefone) VALUES (?, ?, ?, ?)";
         try (Connection conn = Conexao.getConnection();
@@ -35,7 +33,6 @@ public class SuperAdminDAO {
         }
     }
 
-    // ================= LOGIN =================
     public SuperAdmin buscarPorEmailESenha(String email, String senha) {
         String sql = "SELECT * FROM superadmin WHERE email=? AND senha=?";
         try (Connection conn = Conexao.getConnection();
@@ -62,7 +59,6 @@ public class SuperAdminDAO {
         return null;
     }
 
-    // ================= LISTAR TODOS =================
     public List<SuperAdmin> listarTodos() {
         List<SuperAdmin> lista = new ArrayList<>();
         String sql = "SELECT * FROM superadmin";

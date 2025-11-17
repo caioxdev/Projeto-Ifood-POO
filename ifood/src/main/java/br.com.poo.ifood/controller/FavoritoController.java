@@ -12,9 +12,7 @@ public class FavoritoController {
     private FavoritoDAO dao = new FavoritoDAO();
     private RestauranteController restauranteController = new RestauranteController();
 
-    // Adiciona um restaurante aos favoritos do cliente
     public boolean adicionarFavorito(int clienteId, int restauranteId) {
-        // Verifica se o restaurante existe
         if (restauranteController.buscarPorId(restauranteId) == null) {
             System.out.println("Restaurante não existe.");
             return false;
@@ -22,12 +20,10 @@ public class FavoritoController {
         return dao.adicionar(clienteId, restauranteId);
     }
 
-    // Remove um restaurante dos favoritos do cliente
     public boolean removerFavorito(int clienteId, int restauranteId) {
         return dao.remover(clienteId, restauranteId);
     }
 
-    // Lista restaurantes favoritos do cliente
     public List<Restaurante> listarFavoritos(int clienteId) {
         return dao.listarPorCliente(clienteId).stream()
                 .map(f -> restauranteController.buscarPorId(f.getRestaurante_id()))

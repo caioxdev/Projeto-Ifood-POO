@@ -20,7 +20,8 @@ O sistema possui três tipos de usuários: **Cliente**, **Restaurante** e **Supe
 ## Download do Banco de Dados
 
 O banco de dados já está pronto para uso. Você pode baixá-lo clicando no link:
-   [Download do Banco de Dados](https://github.com/caioxdev/Projeto-Ifood-POO/releases/download/v1.0/projeto_ifood.sql)
+
+[Download do Banco de Dados](https://github.com/caioxdev/Projeto-Ifood-POO/releases/download/v1.0/projeto_ifood.sql)
 
 --- 
 
