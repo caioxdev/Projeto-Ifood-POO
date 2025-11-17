@@ -13,7 +13,6 @@ public class RestauranteView {
     private RestauranteController controller = new RestauranteController();
     private ProdutoController produtoController = new ProdutoController();
 
-    // ================== Cores ANSI ==================
     private static final String RESET = "\u001B[0m";
     private static final String VERMELHO = "\u001B[31m";
     private static final String VERDE = "\u001B[32m";
@@ -63,7 +62,6 @@ public class RestauranteView {
     }
 
     private void loginRestaurante() {
-        // Primeiro, listar todos os restaurantes com ID e nome
         List<Restaurante> lista = controller.listar();
         if (lista.isEmpty()) {
             System.out.println(VERMELHO + "Nenhum restaurante cadastrado." + RESET);
@@ -75,7 +73,6 @@ public class RestauranteView {
             System.out.println(r.getId_restaurante() + " - " + r.getNome() + " | Telefone: " + r.getTelefone());
         }
 
-        // Solicitar o ID para o usuário
         System.out.print("Digite o ID do restaurante para login: ");
         int id = Integer.parseInt(sc.nextLine());
 

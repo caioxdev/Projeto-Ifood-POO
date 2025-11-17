@@ -25,7 +25,6 @@ public class PedidoDAO {
                 ResultSet rs = ps.getGeneratedKeys();
                 if (rs.next()) {
                     pedido.setId_pedido(rs.getInt(1));
-                    // Inserir itens do pedido
                     for (ItensPedido item : pedido.getItens()) {
                         adicionarItem(pedido, item);
                     }
@@ -105,7 +104,6 @@ public class PedidoDAO {
         return itens;
     }
 
-    // ================== Listar todos os pedidos ==================
     public List<Pedido> listarTodos() {
         List<Pedido> pedidos = new ArrayList<>();
         String sql = "SELECT * FROM pedido";
@@ -120,7 +118,6 @@ public class PedidoDAO {
                 p.setCliente_id(rs.getInt("cliente_id"));
                 p.setRestaurante_id(rs.getInt("restaurante_id"));
                 p.setPreco_total(rs.getDouble("preco_total"));
-                // Pega os itens do pedido
                 p.setItens(listarItensDoPedido(p.getId_pedido()));
                 pedidos.add(p);
             }

@@ -6,8 +6,7 @@ public class Favorito {
     private int cliente_id;
     private int restaurante_id;
 
-    public Favorito() {
-    }
+    public Favorito() {}
 
     public Favorito(int id_favorito, int cliente_id, int restaurante_id) {
         this.id_favorito = id_favorito;
@@ -15,7 +14,6 @@ public class Favorito {
         this.restaurante_id = restaurante_id;
     }
 
-    // GETTERS E SETTERS
     public int getId_favorito() {
         return id_favorito;
     }

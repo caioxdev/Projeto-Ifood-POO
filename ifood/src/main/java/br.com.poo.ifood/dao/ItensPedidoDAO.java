@@ -8,8 +8,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class ItensPedidoDAO {
-
-    // Cadastrar item de pedido no banco
     public boolean cadastrar(ItensPedido item) {
         String sql = "INSERT INTO itens_pedido (pedido_id, produto_id, quantidade, preco_unitario) VALUES (?, ?, ?, ?)";
 

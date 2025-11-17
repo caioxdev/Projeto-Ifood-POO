@@ -8,8 +8,7 @@ public class ItensPedido {
     private double preco_unitario;
     private Produto produto; // referência ao produto
 
-    public ItensPedido() {
-    }
+    public ItensPedido() {}
 
     public ItensPedido(Produto produto, int quantidade, double preco_unitario) {
         this.produto = produto;

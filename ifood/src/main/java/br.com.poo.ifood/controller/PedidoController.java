@@ -12,7 +12,6 @@ import java.util.Scanner;
 public class PedidoController {
     private PedidoDAO dao = new PedidoDAO();
 
-    // ================== Cores ANSI ==================
     private static final String RESET = "\u001B[0m";
     private static final String VERMELHO = "\u001B[31m";
     private static final String VERDE = "\u001B[32m";

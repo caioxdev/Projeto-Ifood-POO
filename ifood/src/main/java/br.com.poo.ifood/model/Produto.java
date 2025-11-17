@@ -8,8 +8,7 @@ public class Produto {
     private int quantidade;
     private double preco;
 
-    public Produto() {
-    }
+    public Produto() {}
 
     public Produto(int restaurante_id, String nome, String descricao, int quantidade, double preco) {
         this.restaurante_id = restaurante_id;

@@ -48,7 +48,6 @@ public class ClienteDAO {
         return null;
     }
 
-    // === LISTAR TODOS OS CLIENTES ===
     public List<Cliente> listarTodos() {
         List<Cliente> lista = new ArrayList<>();
         String sql = "SELECT * FROM cliente";

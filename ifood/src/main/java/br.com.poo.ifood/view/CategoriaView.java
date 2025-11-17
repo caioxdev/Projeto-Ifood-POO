@@ -44,8 +44,10 @@ public class CategoriaView {
         System.out.print("Descrição: ");
         c.setDescricao(sc.nextLine());
 
-        if(controller.cadastrar(c)) System.out.println("Categoria cadastrada com sucesso!");
-        else System.out.println("Erro ao cadastrar categoria.");
+        if(controller.cadastrar(c))
+            System.out.println("Categoria cadastrada com sucesso!");
+        else
+            System.out.println("Erro ao cadastrar categoria.");
     }
 
     private void listar() {
@@ -63,7 +65,10 @@ public class CategoriaView {
         System.out.print("ID da categoria: ");
         int id = Integer.parseInt(sc.nextLine());
         Categoria c = controller.buscarPorId(id);
-        if(c == null) { System.out.println("Categoria não encontrada!"); return; }
+        if(c == null) {
+            System.out.println("Categoria não encontrada!");
+            return;
+        }
 
         System.out.print("Novo nome (" + c.getNome() + "): ");
         String nome = sc.nextLine();
@@ -71,16 +76,20 @@ public class CategoriaView {
 
         System.out.print("Nova descrição (" + c.getDescricao() + "): ");
         String desc = sc.nextLine();
-        if(!desc.isEmpty()) c.setDescricao(desc);
-
-        if(controller.atualizar(c)) System.out.println("Categoria atualizada!");
-        else System.out.println("Erro ao atualizar categoria.");
+        if(!desc.isEmpty())
+            c.setDescricao(desc);
+        if(controller.atualizar(c))
+            System.out.println("Categoria atualizada!");
+        else
+            System.out.println("Erro ao atualizar categoria.");
     }
 
     private void remover() {
         System.out.print("ID da categoria: ");
         int id = Integer.parseInt(sc.nextLine());
-        if(controller.remover(id)) System.out.println("Categoria removida!");
-        else System.out.println("Erro ao remover categoria.");
+        if(controller.remover(id))
+            System.out.println("Categoria removida!");
+        else
+            System.out.println("Erro ao remover categoria.");
     }
 }

@@ -48,13 +48,16 @@ public class ProdutoView {
         System.out.print("Preço: ");
         p.setPreco(Double.parseDouble(sc.nextLine()));
 
-        if(controller.cadastrar(p)) System.out.println("Produto cadastrado!");
-        else System.out.println("Erro ao cadastrar produto.");
+        if(controller.cadastrar(p))
+            System.out.println("Produto cadastrado!");
+        else
+            System.out.println("Erro ao cadastrar produto.");
     }
 
     private void listarProdutos() {
         List<Produto> lista = controller.listar();
-        if(lista.isEmpty()) System.out.println("Nenhum produto encontrado.");
+        if(lista.isEmpty())
+            System.out.println("Nenhum produto encontrado.");
         else {
             System.out.println("\n--- LISTA DE PRODUTOS ---");
             for(Produto p : lista) {
@@ -68,6 +71,6 @@ public class ProdutoView {
         }
     }
 
-    private void atualizarProduto() { /* similar ao cadastrar, mas busca por id */ }
-    private void removerProduto() { /* verifica se está em pedidos antes de remover */ }
+    private void atualizarProduto(){}
+    private void removerProduto(){}
 }

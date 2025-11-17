@@ -8,8 +8,7 @@ public class Restaurante {
     private int categoria_id;
     private double avaliacao;
 
-    public Restaurante() {
-    }
+    public Restaurante() {}
 
     public Restaurante(String nome, String telefone, String endereco, int categoria_id) {
         this.nome = nome;

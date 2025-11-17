@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProdutoDAO {
-
-    // Listar todos os produtos
     public List<Produto> listar() {
         List<Produto> produtos = new ArrayList<>();
         String sql = "SELECT * FROM produto";
@@ -35,7 +33,6 @@ public class ProdutoDAO {
         return produtos;
     }
 
-    // Buscar produto por ID
     public Produto buscarPorId(int id) {
         String sql = "SELECT * FROM produto WHERE id_produto = ?";
         try (Connection con = Conexao.getConnection();
@@ -60,7 +57,6 @@ public class ProdutoDAO {
         return null;
     }
 
-    // Listar produtos de um restaurante
     public List<Produto> listarPorRestaurante(int restauranteId) {
         List<Produto> produtos = new ArrayList<>();
         String sql = "SELECT * FROM produto WHERE restaurante_id = ?";
@@ -88,7 +84,6 @@ public class ProdutoDAO {
         return produtos;
     }
 
-    // Cadastrar produto
     public boolean cadastrar(Produto p) {
         String sql = "INSERT INTO produto (nome, descricao, preco, quantidade, restaurante_id) VALUES (?, ?, ?, ?, ?)";
         try (Connection con = Conexao.getConnection();
@@ -107,7 +102,6 @@ public class ProdutoDAO {
         return false;
     }
 
-    // Atualizar produto
     public boolean atualizar(Produto p) {
         String sql = "UPDATE produto SET nome=?, descricao=?, preco=?, quantidade=? WHERE id_produto=?";
         try (Connection con = Conexao.getConnection();
@@ -127,7 +121,6 @@ public class ProdutoDAO {
         return false;
     }
 
-    // Remover produto
     public boolean remover(int id) {
         String sql = "DELETE FROM produto WHERE id_produto=?";
         try (Connection con = Conexao.getConnection();

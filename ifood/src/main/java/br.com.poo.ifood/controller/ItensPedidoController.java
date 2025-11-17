@@ -7,7 +7,6 @@ public class ItensPedidoController {
 
     private ItensPedidoDAO dao = new ItensPedidoDAO();
 
-    // Cadastrar item de pedido
     public boolean cadastrar(ItensPedido item) {
         return dao.cadastrar(item);
     }
