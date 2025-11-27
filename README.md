@@ -174,6 +174,16 @@ private static final String PASSWORD = "sua_senha";
 
 ---
 
+## Integrantes
+
+- Caio Seabra de Queiroz
+- Ádam Amarildo Guedes Carneiro
+- Arthur Freitas Araújo
+- Miguel Oliveira Silva
+- Leonardo Yudi Umetsu Ueyama
+
+---
+
 ## Conclusão
 
 - O projeto persiste dados em **MySQL.**
